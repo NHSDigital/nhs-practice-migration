@@ -94,6 +94,7 @@
     <Build Include="dbo\Tables\Practicioner_Address.sql" />
     <Build Include="dbo\Tables\ProcedureRequest.sql" />
     <Build Include="dbo\Tables\Qualification.sql" />
+    <Build Include="dbo\Tables\Refset.sql" />
     <Build Include="dbo\Tables\ReferralRequest.sql" />
     <Build Include="dbo\Tables\ReferralRequest_BasedOn.sql" />
     <Build Include="dbo\Tables\ReferralRequest_ReasonReference.sql" />

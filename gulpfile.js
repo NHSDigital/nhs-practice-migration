@@ -96,7 +96,7 @@ const deployGPDataDatabase = (done) => {
     const sqlPackage = childProcess.spawn('sqlpackage', [
         '/Action:Publish',
         `/SourceFile:GPData/bin/Debug/GPData.dacpac`,
-        '/TargetDatabaseName:GPData',
+        '/TargetDatabaseName:GPData2',
         '/TargetServerName:localhost',
         '/TargetUser:sa',
         '/TargetPassword:9um#Qu&6d3t5',

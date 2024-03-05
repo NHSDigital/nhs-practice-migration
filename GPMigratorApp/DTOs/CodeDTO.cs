@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace GPMigratorApp.DTOs;
 
 public class CodeDTO

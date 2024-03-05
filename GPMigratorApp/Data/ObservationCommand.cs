@@ -30,7 +30,6 @@ public class ObservationCommand : IObservationCommand
                       ,[{nameof(ObservationDTO.OriginalId)}]                  	= observation.OriginalId
       				  ,[{nameof(ObservationDTO.Status)}]                  		= observation.Status
       				  ,[{nameof(ObservationDTO.Category)}]                  	= observation.Category
-      				  ,[{nameof(ObservationDTO.Code)}]                  		= observation.Code
       				  ,[{nameof(ObservationDTO.Context)}]                  		= observation.ContextId
       				  ,[{nameof(ObservationDTO.EffectiveDate)}]                 = observation.EffectiveDate
       				  ,[{nameof(ObservationDTO.EffectiveDateFrom)}]             = observation.EffectiveDateFrom
@@ -48,6 +47,10 @@ public class ObservationCommand : IObservationCommand
       				  ,[{nameof(ObservationDTO.ReferenceRangeAgeHigh)}]         = observation.ReferenceRangeAgeHigh
       				  ,[{nameof(ObservationDTO.ReferenceRangeAgeLow)}]          = observation.ReferenceRangeAgeLow
       				  ,[{nameof(ObservationDTO.EntityId)}]                  	= observation.Entityid
+        			  ,[{nameof(CodeDTO.Id)}]                  					= coding.Id
+          			  ,[{nameof(CodeDTO.ReadCode)}]                  			= coding.ReadCode
+          			  ,[{nameof(CodeDTO.SnomedCode)}]                  			= coding.SnomedCode
+          			  ,[{nameof(CodeDTO.Description)}]                  		= coding.Description
 				  	  ,[{nameof(OutboundRelationship.Id)}]                  	= basedOn.Id
 				  	  ,[{nameof(OutboundRelationship.Type)}]                  	= basedOn.EntityType
 				  	  ,[{nameof(PatientDTO.Id)}]								= patient.Id
@@ -107,6 +110,7 @@ public class ObservationCommand : IObservationCommand
       				  ,[{nameof(ObservationDTO.EntityId)}]                  	= relatedTo.Entityid
  				  FROM [dbo].[Observation] observation
   				  LEFT JOIN [dbo].[Entity] basedOn ON basedOn.Id = observation.BasedOn
+  				  LEFT JOIN [dbo].[Coding] coding ON coding.Id = observation.Code
   				  LEFT JOIN [dbo].[Patient] patient ON patient.Id = observation.SubjectId
 				  LEFT JOIN [dbo].[Entity] performer ON performer.Id = observation.PerformerId
   				  LEFT JOIN [dbo].[Observation] relatedTo ON relatedTo.Id = observation.RelatedTo
@@ -116,9 +120,11 @@ public class ObservationCommand : IObservationCommand
             {
                 OriginalId = originalId
             }, transaction: transaction);
-            var observations = reader.Read<ObservationDTO, OutboundRelationship?, PatientDTO?, OutboundRelationship?,ObservationDTO?, ObservationDTO >(
-                (observation, basedOn, subject, performer, relatedTo ) =>
+            var observations = reader.Read<ObservationDTO, CodeDTO, OutboundRelationship?, PatientDTO?, OutboundRelationship?,ObservationDTO?, ObservationDTO >(
+                (observation,code, basedOn, subject, performer, relatedTo ) =>
                 {
+	                observation.Code = code;
+	                
 	                if (basedOn is not null)
                     {
 	                    observation.BasedOn = basedOn;
@@ -312,10 +318,10 @@ public class ObservationCommand : IObservationCommand
 	            OriginalId = observation.OriginalId,
 	            Status = observation.Status,
 	            Category = observation.Category,
-	            Code = observation.Code,
-	            BasedOn = observation.BasedOn?.OriginalId,
-	            SubjectId = observation.Subject.OriginalId,
-	            ContextId = observation.Context?.OriginalId,
+	            Code = observation.Code?.Id,
+	            BasedOn = observation.BasedOn?.Id,
+	            SubjectId = observation.Subject.Id,
+	            ContextId = observation.Context?.Id,
 	            EffectiveDate = observation.EffectiveDate,
 	            EffectiveDateFrom = observation.EffectiveDateFrom,
 	            EffectiveDateTo = observation.EffectiveDateTo,
@@ -326,14 +332,14 @@ public class ObservationCommand : IObservationCommand
 	            Comment = observation.Comment,
 	            BodySite = observation.BodySite,
 	            Method = observation.Method,
-	            Device = observation.Device?.OriginalId,
+	            Device = observation.Device?.Id,
 	            ReferenceRangeLow = observation.ReferenceRangeLow,
 	            ReferenceRangeHigh = observation.ReferenceRangeHigh,
 	            ReferenceRangeType = observation.ReferenceRangeType,
 	            ReferenceRangeAppliesTo = observation.ReferenceRangeAppliesTo,
 	            ReferenceRangeAgeHigh = observation.ReferenceRangeAgeHigh,
 	            ReferenceRangeAgeLow = observation.ReferenceRangeAgeLow,
-	            RelatedTo = observation.RelatedTo?.OriginalId,
+	            RelatedTo = observation.RelatedTo?.Id,
 	            Entityid = observation.EntityId
 
             }, cancellationToken: cancellationToken, transaction: transaction);

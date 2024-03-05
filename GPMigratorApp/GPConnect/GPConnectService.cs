@@ -25,10 +25,7 @@ public class GPConnectService : IGPConnectService
         var path = Directory.GetCurrentDirectory();
         var text = "";
         
-        if(nhsNumber == "9465698490")
-             text = await File.ReadAllTextAsync(path + $"{Path.DirectorySeparatorChar}example_json{Path.DirectorySeparatorChar}Shoshana_Daniels.json");
-        else if(nhsNumber == "9730333831")
-            text = await File.ReadAllTextAsync(path + $"{Path.DirectorySeparatorChar}example_json{Path.DirectorySeparatorChar}EMIS_9730333831_full.json");
+        text = await File.ReadAllTextAsync(path + $"{Path.DirectorySeparatorChar}example_json{Path.DirectorySeparatorChar}{nhsNumber}.json");
         var jsonParser = new FhirJsonParser();
         var fhirResponse = new FhirResponse();
         

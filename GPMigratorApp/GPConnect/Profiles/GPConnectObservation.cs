@@ -1,4 +1,6 @@
+using System.Numerics;
 using System.Reflection;
+using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Serialization;
 using DotNetGPSystem;
 using GPConnect.Provider.AcceptanceTests.Http;
@@ -49,9 +51,12 @@ public class GPConnectObservation : Observation
             dto.Code = new CodeDTO
             {
                 ReadCode = this.Code.Coding?.FirstOrDefault(x => x.System == "http://read.info/readv2")?.Code,
-                SnomedCode = this.Code.Coding?.FirstOrDefault(x => x.System == "http://snomed.info/sct")?.Code,
+
                 Description = this.Code.Coding?.FirstOrDefault(x=> x.System == "http://snomed.info/sct")?.Display
             };
+            var code = this.Code.Coding?.FirstOrDefault(x => x.System == "http://snomed.info/sct")?.Code;
+            if (code != null)
+                dto.Code.SnomedCode =code;
         }
 
         if (this.Related?.FirstOrDefault()?.Target?.Reference is not null)
@@ -67,7 +72,13 @@ public class GPConnectObservation : Observation
         var effectiveDate = this.Effective?.FirstOrDefault().Value;
         if (effectiveDate is not null)
         {
-            dto.EffectiveDate = DateTime.Parse(effectiveDate.ToString());
+            var success = DateTime.TryParse(effectiveDate.ToString(), out var date);
+            if (success)
+                dto.EffectiveDate = date;
+            else
+            {
+                dto.EffectiveDate = new DateTime(int.Parse(effectiveDate.ToString()), 01, 01);
+            }
         }
 
         if (this.Performer is not null)

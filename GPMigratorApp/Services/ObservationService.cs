@@ -21,37 +21,42 @@ public class ObservationService: IObservationService
         {
             if (observation.Code is not null)
                 observation.Code.Id = await _codingService.PutCoding(observation.Code, connection, transaction, cancellationToken);
-            
-            var existingRecord =
-                await observationCommand.GetObservationAsync(observation.OriginalId, cancellationToken, transaction);
-            if (existingRecord is null)
+            try
             {
-                await observationCommand.InsertObservationAsync(observation, cancellationToken, transaction);
+                var existingRecord =
+                    await observationCommand.GetObservationAsync(observation.OriginalId, cancellationToken,
+                        transaction);
+                if (existingRecord is null)
+                {
+                    await observationCommand.InsertObservationAsync(observation, cancellationToken, transaction);
+                }
+                else
+                {
+                    existingRecord.OriginalId = observation.OriginalId;
+                    existingRecord.Status = observation.Status;
+                    existingRecord.Category = observation.Category;
+                    existingRecord.EffectiveDate = observation.EffectiveDate;
+                    existingRecord.EffectiveDateFrom = observation.EffectiveDateFrom;
+                    existingRecord.EffectiveDateTo = observation.EffectiveDateTo;
+                    existingRecord.Issued = observation.Issued;
+                    existingRecord.Interpretation = observation.Interpretation;
+                    existingRecord.DataAbsentReason = observation.DataAbsentReason;
+                    existingRecord.Comment = observation.Comment;
+                    existingRecord.BodySite = observation.BodySite;
+                    existingRecord.Method = observation.Method;
+                    existingRecord.ReferenceRangeLow = observation.ReferenceRangeLow;
+                    existingRecord.ReferenceRangeHigh = observation.ReferenceRangeHigh;
+                    existingRecord.ReferenceRangeType = observation.ReferenceRangeType;
+                    existingRecord.ReferenceRangeAppliesTo = observation.ReferenceRangeAppliesTo;
+                    existingRecord.ReferenceRangeAgeHigh = observation.ReferenceRangeAgeHigh;
+                    existingRecord.ReferenceRangeAgeLow = observation.ReferenceRangeAgeLow;
+
+                    await observationCommand.UpdateObservationAsync(existingRecord, cancellationToken, transaction);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                existingRecord.OriginalId = observation.OriginalId;
-                existingRecord.Status = observation.Status;
-                existingRecord.Category = observation.Category;
-                existingRecord.Code = observation.Code;
-                existingRecord.EffectiveDate = observation.EffectiveDate;
-                existingRecord.EffectiveDateFrom = observation.EffectiveDateFrom;
-                existingRecord.EffectiveDateTo = observation.EffectiveDateTo;
-                existingRecord.Issued = observation.Issued;
-                existingRecord.Interpretation = observation.Interpretation;
-                existingRecord.DataAbsentReason = observation.DataAbsentReason;
-                existingRecord.Comment = observation.Comment;
-                existingRecord.BodySite = observation.BodySite;
-                existingRecord.Method = observation.Method;
-                existingRecord.ReferenceRangeLow = observation.ReferenceRangeLow;
-                existingRecord.ReferenceRangeHigh = observation.ReferenceRangeHigh;
-                existingRecord.ReferenceRangeType = observation.ReferenceRangeType;
-                existingRecord.ReferenceRangeAppliesTo = observation.ReferenceRangeAppliesTo;
-                existingRecord.ReferenceRangeAgeHigh = observation.ReferenceRangeAgeHigh;
-                existingRecord.ReferenceRangeAgeLow = observation.ReferenceRangeAgeLow;
-                existingRecord.EntityId = observation.EntityId;
                 
-                await observationCommand.UpdateObservationAsync(existingRecord, cancellationToken, transaction);
             }
         }
 

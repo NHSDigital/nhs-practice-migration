@@ -56,24 +56,25 @@ namespace GPMigratorApp.Controllers
 
             search.NhsNumber = search.NhsNumber.Trim();
 
-            if (search.NhsNumber == "9465698490")
+            var jsonPatients = new List<string>
             {
-                search.Response = await _gpConnectService.GetLocalFile("9465698490");
-            }
-            if (search.NhsNumber == "9730333831")
-            {
-                search.Response = await _gpConnectService.GetLocalFile("9730333831");
-            }
+                "9465698490", "9730333831", "9730146896", "9730147019", "9730333939", "5990275439", "9465693839",
+                "9465694819", "9465699012", "9465699896", "9465701998", "9692136701"
+            };
+            if (jsonPatients.Contains(search.NhsNumber))
+                search.Response = await _gpConnectService.GetLocalFile(search.NhsNumber);
 
-            var request = CreateRequest(search.NhsNumber.Trim());
 
-            var options = new JsonSerializerOptions();
-            options.WriteIndented = true;
+
+            if (!jsonPatients.Contains(search.NhsNumber))
+            {  
+                var request = CreateRequest(search.NhsNumber);
+
+                var options = new JsonSerializerOptions();
+                options.WriteIndented = true;
             
-            string jsonString = JsonSerializer.Serialize(request);
+                string jsonString = JsonSerializer.Serialize(request);
 
-            if (search.NhsNumber != "9465698490")
-            {
                 try
                 {
                     var result = await _gpConnectService.SendRequestAsync(HttpMethod.Post,
