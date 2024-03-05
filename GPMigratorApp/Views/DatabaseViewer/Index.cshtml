@@ -1,0 +1,45 @@
+﻿@using Newtonsoft.Json
+@using GPMigratorApp.ViewComponents
+
+@{
+    ViewData["Title"] = "Database";
+}
+<div class="nhsuk-width-container">
+    <h1>Database viewer</h1>
+    <div class="nhsuk-tabs__panel" id="patient">
+        <div>
+            <h2 class="">Patient</h2>
+                          
+            @await Component.InvokeAsync(nameof(AllPatients))
+                            
+        </div>
+    </div>
+    
+    
+    <div class="nhsuk-tabs__panel" id="organizations">
+        <div>
+            <h2 class="">Organization</h2>
+     
+            @await Component.InvokeAsync(nameof(AllOrganizations))
+     
+        </div>
+    </div>
+    
+    <div class="nhsuk-tabs__panel" id="practicioners">
+        <div>
+            <h2 class="">Practitioners</h2>
+         
+            @await Component.InvokeAsync(nameof(AllPractitioners))
+         
+        </div>
+    </div>
+     <div class="nhsuk-tabs__panel" id="practicioners">
+            <div>
+                <h2 class="">Locations</h2>
+             
+                @await Component.InvokeAsync(nameof(Location))
+             
+            </div>
+        </div>
+
+</div>

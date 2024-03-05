@@ -1,0 +1,45 @@
+@using Hl7.Fhir.Model
+@using GPMigratorApp.GPConnect.Helpers
+@model IEnumerable<GPMigratorApp.DTOs.PatientDTO>
+
+<table role="table" class="nhsuk-table-responsive">
+  <caption class="nhsuk-table__caption">All Patients</caption>
+  <thead role="rowgroup" class="nhsuk-table__head">
+    <tr role="row">
+      <th role="columnheader" class="" scope="col">
+        Patient Name
+      </th>
+      <th role="columnheader" class="" scope="col">
+        DOB
+      </th>
+      <th role="columnheader" class="" scope="col">
+        NHS Number
+      </th>
+       <th role="columnheader" class="" scope="col">
+              ID
+            </th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+  
+  @foreach (var patient in Model)
+  {
+    <tr role="row" class="nhsuk-table__row">
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">Patient Name</span>@patient.FullName
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">DOB </span>@patient.DateOfBirthUTC.ToString("dd/MM/yyyy") 
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">NHS Number </span>@patient.NhsNumber
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">ID </span>@patient.Id
+      </td>
+    </tr>
+  }
+  
+
+  </tbody>
+</table>

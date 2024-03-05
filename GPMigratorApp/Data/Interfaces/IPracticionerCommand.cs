@@ -15,4 +15,5 @@ public interface IPracticionerCommand
     
     Task UpdatePracticionerAsync(PracticionerDTO practicioner, CancellationToken cancellationToken,
         IDbTransaction transaction);
+    
 }

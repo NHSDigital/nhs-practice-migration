@@ -11,10 +11,28 @@ namespace GPMigratorApp.Services;
 
 public class OrganizationService: IOrganizationService
 {
-    
-    public OrganizationService()
+    private readonly IAzureSqlDbConnectionFactory _connectionFactory;
+    public OrganizationService(IAzureSqlDbConnectionFactory connectionFactory)
     {
+        _connectionFactory = connectionFactory;
+    }
+    
+    public async Task<IEnumerable<OrganizationDTO>> GetAllOrganizationsAsync(CancellationToken cancellationToken)
+    {
+        var newConnection =  await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
         
+        var organizationCommand = new OrganizationCommand(newConnection);
+
+        var allRecords = await organizationCommand.GetAllOrganizationRecordsAsync(cancellationToken);
+
+        return allRecords;
+
+    }
+    
+    public async Task<IEnumerable<OrganizationDTO>> GetAllOrganizationRecordsAsync(CancellationToken cancellationToken)
+    {
+        return null;
+
     }
     
     public async Task PutOrganizations(IEnumerable<OrganizationDTO> organizations,IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)

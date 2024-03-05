@@ -10,6 +10,7 @@ public class PatientDTO
 
     public Guid Id { get; set; }
     public string OriginalId { get; set; }
+    public string FullName => String.Join(" ",Title, GivenName, MiddleNames, Surname);
     public string PatientId { get; set; }
     public string OrganisationGuid { get; set; }
     public string UsualGpUserInRoleGuid { get; set; }

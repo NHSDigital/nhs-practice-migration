@@ -9,4 +9,7 @@ public interface IPatientService
         CancellationToken cancellationToken);
 
     Task<PatientDTO> GetPatientAsync(string nhsNumber, CancellationToken cancellationToken);
+    
+
+    Task<IEnumerable<PatientDTO>> GetAllPatientsAsync(CancellationToken cancellationToken);
 }

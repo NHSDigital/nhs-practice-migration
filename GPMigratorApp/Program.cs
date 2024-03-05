@@ -46,7 +46,7 @@ builder.Services.AddScoped<IStoreRecordService, StoreRecordService>();
 builder.Services.AddScoped<IGPConnectService, GPConnectService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
-builder.Services.AddScoped<IPracticionerService, PracticionerService>();
+builder.Services.AddScoped<IPracticionerService, PractitionerService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IObservationService, ObservationService>();
 builder.Services.AddScoped<ICodingService, CodingService>();

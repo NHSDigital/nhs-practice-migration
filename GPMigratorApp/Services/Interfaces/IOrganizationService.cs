@@ -7,4 +7,7 @@ public interface IOrganizationService
 {
     Task PutOrganizations(IEnumerable<OrganizationDTO> organizations, IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken);
 
+    Task  <IEnumerable<OrganizationDTO>>GetAllOrganizationsAsync(CancellationToken cancellationToken);
+
+    Task<IEnumerable<OrganizationDTO>> GetAllOrganizationRecordsAsync(CancellationToken cancellationToken);
 }

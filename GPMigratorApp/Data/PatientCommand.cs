@@ -3,6 +3,7 @@ using Dapper;
 using GPMigratorApp.Data.Interfaces;
 using GPMigratorApp.Data.Types;
 using GPMigratorApp.DTOs;
+using GPMigratorApp.Services;
 using Microsoft.Data.SqlClient;
 
 namespace GPMigratorApp.Data;
@@ -113,7 +114,32 @@ public class PatientCommand : IPatientCommand
             return patients.FirstOrDefault();
     }
     
-         
+      public async Task<IEnumerable<PatientDTO>> GetAllPatientRecordsAsync(CancellationToken cancellationToken)
+    {
+	    string getExisting =
+		    @$"SELECT
+                       [{nameof(PatientDTO.Title)}]                        		= patient.Title
+                      ,[{nameof(PatientDTO.GivenName)}]                   		= patient.GivenName
+					  ,[{nameof(PatientDTO.MiddleNames)}]                  		= patient.MiddleNames
+                      ,[{nameof(PatientDTO.Surname)}]							= patient.Surname
+  					  ,[{nameof(PatientDTO.DateOfBirthUTC)}]               		= patient.DateOfBirthUtc
+					  ,[{nameof(PatientDTO.Id)}]								= patient.Id
+					  ,[{nameof(PatientDTO.NhsNumber)}]						    = patient.NHSNumber
+					                                       
+
+                FROM [GPData].[dbo].[Patient]
+				  ";
+        
+            var reader = await _connection.QueryMultipleAsync(getExisting, new
+            {
+	           
+            }
+            
+            );
+            var patients = reader.Read<PatientDTO>();
+            return patients;
+    }
+    
      public async Task<PatientDTO?> GetPatientByNHSNumberAsync(string nhsNumber, CancellationToken cancellationToken)
     {
 	    string getExisting =

@@ -1,0 +1,33 @@
+@using Hl7.Fhir.Model
+@using GPMigratorApp.GPConnect.Helpers
+@model IEnumerable<GPMigratorApp.DTOs.LocationDTO>
+
+<table role="table" class="nhsuk-table-responsive">
+    <caption class="nhsuk-table__caption">All Locations</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+    <tr role="row">
+        <th role="columnheader" class="" scope="col">
+            Location Name
+        </th>
+        <th role="columnheader" class="" scope="col">
+            Managing Organisation Name
+        </th>
+    </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+  
+    @foreach (var location in Model)
+    {
+        <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Location Name</span>@location.Name
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Managing Organization Name </span>@location.ManagingOrganization.Name
+            </td>
+        </tr>
+    }
+  
+
+    </tbody>
+</table>

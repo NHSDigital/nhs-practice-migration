@@ -12,9 +12,22 @@ namespace GPMigratorApp.Services;
 public class LocationService: ILocationService
 {
     
-    public LocationService()
+    public LocationService(IAzureSqlDbConnectionFactory connectionFactory)
     {
+        _connectionFactory = connectionFactory;
+    }
+    private readonly IAzureSqlDbConnectionFactory _connectionFactory;
+    
+    public async Task <IEnumerable<LocationDTO>> GetAllLocationsAsync(CancellationToken cancellationToken)
+    {
+        var newConnection =  await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
         
+        var locationCommand = new LocationCommand(newConnection);
+
+        var allLocations = await locationCommand.GetAllLocationsAsync(cancellationToken);
+
+        return allLocations;
+
     }
     
     public async Task PutLocations(IEnumerable<LocationDTO> locations,IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)

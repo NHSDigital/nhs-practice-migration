@@ -7,4 +7,6 @@ public interface ILocationService
 {
     Task PutLocations(IEnumerable<LocationDTO> locations, IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken);
 
+    Task <IEnumerable<LocationDTO>>GetAllLocationsAsync(CancellationToken cancellationToken);
+
 }

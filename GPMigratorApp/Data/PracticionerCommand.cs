@@ -21,6 +21,59 @@ public class PracticionerCommand : IPracticionerCommand
         _connection = connection;
     }
 
+    public async Task<IEnumerable<PracticionerRoleDTO>> GetAllPractitionerRecordsAsync(CancellationToken cancellationToken)
+    {
+	    string getExisting =
+		    @$"SELECT
+				    [{nameof(PracticionerRoleDTO.Id)}]							= practicionerRole.Id
+					,[{nameof(PracticionerRoleDTO.OriginalId)}]					= practicionerRole.OriginalId
+					,[{nameof(PracticionerRoleDTO.Active)}]						= practicionerRole.Active
+					,[{nameof(PracticionerRoleDTO.PeriodStart)}]				= practicionerRole.PeriodStart
+					,[{nameof(PracticionerRoleDTO.PeriodEnd)}]					= practicionerRole.PeriodEnd
+					,[{nameof(PracticionerRoleDTO.SDSJobRoleName)}]				= practicionerRole.SDSJobRoleName
+					,[{nameof(PracticionerRoleDTO.Speciality)}]					= practicionerRole.Speciality
+					,[{nameof(PracticionerRoleDTO.Telecom)}]					= practicionerRole.Telecom
+  					,[{nameof(PracticionerDTO.Id)}]							= practicioner.Id
+					,[{nameof(PracticionerDTO.Title)}]							= practicioner.Title
+					,[{nameof(PracticionerDTO.GivenName)}]						= practicioner.GivenName
+					,[{nameof(PracticionerDTO.MiddleNames)}]					= practicioner.MiddleNames
+					,[{nameof(PracticionerDTO.Surname)}]						= practicioner.Surname
+					,[{nameof(PracticionerDTO.OriginalId)}]					= practicioner.OriginalId
+				  	,[{nameof(OrganizationDTO.Id)}]							= organization.Id
+                    ,[{nameof(OrganizationDTO.ODSCode)}]                      = organization.ODSCode
+                    ,[{nameof(OrganizationDTO.PeriodStart)}]                  = organization.PeriodStart
+                    ,[{nameof(OrganizationDTO.PeriodEnd)}]                    = organization.PeriodEnd
+                    ,[{nameof(OrganizationDTO.Type)}]                         = organization.Type
+                    ,[{nameof(OrganizationDTO.Name)}]                         = organization.Name
+                    ,[{nameof(OrganizationDTO.Telecom)}]                      = organization.Telecom
+				    ,[{nameof(OrganizationDTO.EntityId)}]                     = organization.EntityId
+
+	FROM [GPData].[dbo].[PracticionerRole] practicionerRole
+	LEFT JOIN [dbo].[Practicioner] practicioner 
+	ON practicioner.[Id] = practicionerRole.[practicioner]
+	LEFT JOIN [dbo].[Organization] organization 
+	ON organization.[Id] = practicionerRole.[Organization]
+
+";
+
+	    var reader = await _connection.QueryMultipleAsync(getExisting);
+	 
+	    var practicionerRoles = reader.Read<PracticionerRoleDTO, PracticionerDTO, OrganizationDTO?, PracticionerRoleDTO>(
+		    (practicionerRole, practicioner, organization) =>
+		    {
+			    practicionerRole.Practicioner = practicioner;
+
+			    if (organization is not null)
+			    {
+				    practicionerRole.Organization = organization;
+			    }
+			    
+	                
+			    return practicionerRole;
+		    }, splitOn: $"{nameof(PracticionerDTO.Id)},{nameof(OrganizationDTO.Id)}");
+
+	    return practicionerRoles;
+    }
 
     public async Task<PracticionerDTO?> GetPracticionerAsync(string originalId, CancellationToken cancellationToken, IDbTransaction transaction)
     {

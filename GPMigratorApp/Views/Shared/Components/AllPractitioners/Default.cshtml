@@ -1,0 +1,40 @@
+@using Hl7.Fhir.Model
+@using GPMigratorApp.GPConnect.Helpers
+@using GPMigratorApp.DTOs
+@model IEnumerable<GPMigratorApp.DTOs.PracticionerRoleDTO>
+
+
+
+<table role="table" class="nhsuk-table-responsive">
+  <caption class="nhsuk-table__caption">All Practitioners</caption>
+  <thead role="rowgroup" class="nhsuk-table__head">
+  <tr role="row">
+  <th role="columnheader" class="" scope="col">
+        Practitioner Name
+      </th>
+      <th role="columnheader" class="" scope="col">
+        Practitioner ID
+      </th>
+    <th role="columnheader" class="" scope="col">
+            SDS Job Role
+          </th>
+
+  </thead>
+  <tbody class="nhsuk-table__body">
+  
+  @foreach (var practicionerRole in Model)
+  {
+    <tr role="row" class="nhsuk-table__row">
+    <td role="cell" class="nhsuk-table__cell">
+      <span class="nhsuk-table-responsive__heading">ID </span>@practicionerRole.Practicioner.FullName
+    </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">ID</span>@practicionerRole.Practicioner.Id
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">ID </span>@practicionerRole.SDSJobRoleName
+            </td>
+    </tr>
+  }
+   </tbody>
+</table>

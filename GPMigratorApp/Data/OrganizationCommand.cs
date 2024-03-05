@@ -19,7 +19,29 @@ public class OrganizationCommand : IOrganizationCommand
         _connection = connection;
     }
 
+    public async Task<IEnumerable<OrganizationDTO>> GetAllOrganizationRecordsAsync(CancellationToken cancellationToken)
+    {
+	    string getExisting =
+		    @$"SELECT 
+    					[{nameof(OrganizationDTO.Id)}] 						=organization.Id
+    					,[{nameof(OrganizationDTO.ODSCode)}]				=organization.ODSCode
+    					,[{nameof(OrganizationDTO.Type)}]					=organization.Type
+						,[{nameof(OrganizationDTO.Name)}]					=organization.Name
+    					,[{nameof(OrganizationDTO.Telecom)}]				=organization.Telecom
+    					,[{nameof(OrganizationDTO.Address.Id)}]				=organization.AddressId
+						FROM [dbo].[Organization]";
 
+	    var reader = await _connection.QueryMultipleAsync(getExisting, new
+		    {
+
+		    }
+	    );
+	    var organizations =
+		    reader
+			    .Read<OrganizationDTO>();
+            return organizations;
+    }
+    
     public async Task<OrganizationDTO?> GetOrganizationAsync(string originalId, CancellationToken cancellationToken, IDbTransaction transaction)
     {
 	    string getExisting =

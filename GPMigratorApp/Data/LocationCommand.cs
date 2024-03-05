@@ -21,7 +21,56 @@ public class LocationCommand : ILocationCommand
         _connection = connection;
     }
 
+    
+        public async Task<IEnumerable<LocationDTO>>GetAllLocationsAsync(CancellationToken cancellationToken)
+    {
+	    string getExisting =
+		    @$"SELECT [{nameof(LocationDTO.Id)}]								= loc.Id
+                      ,[{nameof(LocationDTO.OriginalId)}]                  	    = loc.OriginalId
+                      ,[{nameof(LocationDTO.ODSSiteCode)}]                  	= loc.ODSSiteCodeID
+                      ,[{nameof(LocationDTO.Status)}]                  			= loc.Status
+                      ,[{nameof(LocationDTO.OperationalStatus)}]                = loc.OperationalStatus
+                      ,[{nameof(LocationDTO.Name)}]                         	= loc.Name
+                      ,[{nameof(LocationDTO.Alias)}]                         	= loc.Alias
+                      ,[{nameof(LocationDTO.Description)}]                      = loc.Description
+					  ,[{nameof(LocationDTO.Type)}]                     		= loc.Type
+                      ,[{nameof(LocationDTO.Telecom)}]							= loc.Telecom
+                      ,[{nameof(LocationDTO.PhysicalType)}]						= loc.PhysicalType
+  					  ,[{nameof(LocationDTO.EntityId)}]                     	= loc.EntityId
+					  ,[{nameof(OrganizationDTO.Id)}]							= org.Id
+                      ,[{nameof(OrganizationDTO.ODSCode)}]                      = org.ODSCode
+                      ,[{nameof(OrganizationDTO.PeriodStart)}]                  = org.PeriodStart
+                      ,[{nameof(OrganizationDTO.PeriodEnd)}]                    = org.PeriodEnd
+                      ,[{nameof(OrganizationDTO.Type)}]                         = org.Type
+                      ,[{nameof(OrganizationDTO.Name)}]                         = org.Name
+                      ,[{nameof(OrganizationDTO.Telecom)}]                      = org.Telecom
+					  ,[{nameof(OrganizationDTO.EntityId)}]                     = org.EntityId
+                      
 
+                  FROM [dbo].[Location] loc
+				  LEFT JOIN [dbo].[Organization] org 
+                  ON loc.ManagingOrganizationID = org.Id";
+
+	    var reader = await _connection.QueryMultipleAsync(getExisting);
+	 
+	    IEnumerable<LocationDTO> location = reader.Read<LocationDTO, OrganizationDTO?, LocationDTO>(
+		    (location, organization) =>
+		    {
+			    
+
+			    if (organization is not null)
+			    {
+				    location.ManagingOrganization = organization;
+			    }
+			    
+	                
+			    return location;
+		    }, splitOn: $"{nameof(LocationDTO.Id)},{nameof(OrganizationDTO.Id)}");
+
+	    return location;
+    }
+	    
+	    
     public async Task<LocationDTO?> GetLocationAsync(string originalId, CancellationToken cancellationToken, IDbTransaction transaction)
     {
 	    string getExisting =

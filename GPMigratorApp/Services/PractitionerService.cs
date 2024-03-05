@@ -1,16 +1,31 @@
 using System.Data;
 using GPMigratorApp.Data;
+using GPMigratorApp.Data.Database.Providers.Interfaces;
 using GPMigratorApp.Data.Interfaces;
 using GPMigratorApp.DTOs;
 using GPMigratorApp.Services.Interfaces;
 
 namespace GPMigratorApp.Services;
 
-public class PracticionerService: IPracticionerService
+public class PractitionerService: IPracticionerService
 {
-    public PracticionerService()
+    public PractitionerService(IAzureSqlDbConnectionFactory connectionFactory)
     {
+        _connectionFactory = connectionFactory;
+    }
+    private readonly IAzureSqlDbConnectionFactory _connectionFactory;
+
+    
+    public async Task<IEnumerable<PracticionerRoleDTO>> GetAllPractitionersAsync(CancellationToken cancellationToken)
+    {
+        var newConnection =  await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
         
+        var practitionerCommand = new PracticionerCommand(newConnection);
+
+        var allPractitioners = await practitionerCommand.GetAllPractitionerRecordsAsync(cancellationToken);
+
+        return allPractitioners;
+
     }
     
     public async Task PutPracticioners(IEnumerable<PracticionerDTO> practicioners, IEnumerable<PracticionerRoleDTO> practicionerRoles, IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)

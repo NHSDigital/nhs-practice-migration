@@ -7,6 +7,8 @@ public class Search
 {
     public string NhsNumber { get; set; }
     
+    public string OrganizationName { get; set; }
+    
     public StructuredRecordRequest? Request { get; set; }
 
     public FhirResponse? Response { get; set; }

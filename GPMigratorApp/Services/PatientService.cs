@@ -26,6 +26,18 @@ public class PatientService : IPatientService
         return existingRecord;
 
     }
+    
+    public async Task<IEnumerable<PatientDTO>> GetAllPatientsAsync(CancellationToken cancellationToken)
+    {
+        var newConnection =  await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
+        
+        var patientCommand = new PatientCommand(newConnection);
+
+        var allRecords = await patientCommand.GetAllPatientRecordsAsync(cancellationToken);
+
+        return allRecords;
+
+    }
     public async Task PutPatientsAsync(IEnumerable<PatientDTO> patients, IDbConnection connection,
         IDbTransaction transaction, CancellationToken cancellationToken)
     {

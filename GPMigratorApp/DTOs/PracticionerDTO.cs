@@ -10,6 +10,7 @@ public class PracticionerDTO
     public string? OriginalId{ get; set; }
     public string? SdsUserId{ get; set; }
     public string? SdsRoleProfileId{ get; set; }
+    public string FullName => String.Join(" ",Title, GivenName, MiddleNames, Surname);
     public string? Title { get; set; }
     public string? GivenName { get; set; }
     public string? MiddleNames { get; set; }
