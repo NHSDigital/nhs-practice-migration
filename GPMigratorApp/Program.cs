@@ -50,6 +50,7 @@ builder.Services.AddScoped<IPracticionerService, PractitionerService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IObservationService, ObservationService>();
 builder.Services.AddScoped<ICodingService, CodingService>();
+builder.Services.AddScoped<IConditionService, ConditionService>();
 
 var app = builder.Build();
 

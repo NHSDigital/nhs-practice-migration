@@ -32,8 +32,8 @@ public class EncounterDTO
     public DateTime PeriodStart { get; set; }
     public DateTime PeriodEnd { get; set; }
     public decimal? DurationValue { get; set; }
-    public string DurationUnit { get; set; }
-    public string DurationCode { get; set; }
+    public string? DurationUnit { get; set; }
+    public string? DurationCode { get; set; }
     
     
   

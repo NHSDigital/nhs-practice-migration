@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Condition] (
     [Id]                   UNIQUEIDENTIFIER NOT NULL,
+    [OriginalId]           NVARCHAR (255)   NOT NULL,
     [Identifier]           UNIQUEIDENTIFIER NULL,
     [ActualProblem]        UNIQUEIDENTIFIER NULL,
     [ProblemSignificance]  NVARCHAR (MAX)   NULL,
@@ -7,7 +8,7 @@
     [ClinicalStatus]       NVARCHAR (MAX)   NULL,
     [VerificationStatus]   NVARCHAR (MAX)   NULL,
     [Severity]             NVARCHAR (MAX)   NULL,
-    [Code]                 NVARCHAR (MAX)   NULL,
+    [Code]                 UNIQUEIDENTIFIER NULL,
     [BodySite]             NVARCHAR (MAX)   NULL,
     [Subject]              UNIQUEIDENTIFIER NULL,
     [Context]              UNIQUEIDENTIFIER NULL,
@@ -26,12 +27,15 @@
     [NoteText]             NVARCHAR (MAX)   NULL,
     [NoteAuthored]         DATETIME         NULL,
     [NoteAuthor]           UNIQUEIDENTIFIER NULL,
+    [EntityId]             UNIQUEIDENTIFIER NOT NULL,
     CONSTRAINT [PK__Conditio__A2B5777CD924092C] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK__Condition__Actua__3E1D39E1] FOREIGN KEY ([ActualProblem]) REFERENCES [dbo].[Entity] ([Id]),
+    CONSTRAINT [FK__Condition__Code]            FOREIGN KEY ([Code]) REFERENCES [dbo].[Coding] ([Id]),
     CONSTRAINT [FK__Condition__Asser__42E1EEFE] FOREIGN KEY ([Asserter]) REFERENCES [dbo].[Practicioner] ([Id]),
     CONSTRAINT [FK__Condition__Conte__41EDCAC5] FOREIGN KEY ([Context]) REFERENCES [dbo].[Encounter] ([Id]),
     CONSTRAINT [FK__Condition__Ident__3D2915A8] FOREIGN KEY ([Identifier]) REFERENCES [dbo].[Identifier] ([Id]),
     CONSTRAINT [FK__Condition__NoteA__43D61337] FOREIGN KEY ([NoteAuthor]) REFERENCES [dbo].[Entity] ([Id]),
-    CONSTRAINT [FK__Condition__Subje__40F9A68C] FOREIGN KEY ([Subject]) REFERENCES [dbo].[Patient] ([Id])
+    CONSTRAINT [FK__Condition__Subje__40F9A68C] FOREIGN KEY ([Subject]) REFERENCES [dbo].[Patient] ([Id]),
+    CONSTRAINT [FK__Condition__Entity]          FOREIGN KEY ([EntityId]) REFERENCES [dbo].[Entity] ([Id])
 );
 

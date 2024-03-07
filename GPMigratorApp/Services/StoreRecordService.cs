@@ -19,9 +19,10 @@ public class StoreRecordService : IStoreRecordService
     private readonly IPracticionerService _practicionerService;
     private readonly IPatientService _patientService;
     private readonly IObservationService _observationService;
-
+    private readonly IConditionService _conditionService;
+    
     public StoreRecordService(IAzureSqlDbConnectionFactory connectionFactory, IOrganizationService organizationService,
-        ILocationService locationService, IPracticionerService practicionerService, IPatientService patientService, IObservationService observationService)
+        ILocationService locationService, IPracticionerService practicionerService, IPatientService patientService, IObservationService observationService, IConditionService conditionService)
     {
         _connectionFactory = connectionFactory;
         _organizationService = organizationService;
@@ -29,6 +30,7 @@ public class StoreRecordService : IStoreRecordService
         _practicionerService = practicionerService;
         _patientService = patientService;
         _observationService = observationService;
+        _conditionService = conditionService;
     }
 
     public async Task StoreRecord(FhirResponse fhirResponse, CancellationToken cancellationToken)
@@ -55,6 +57,9 @@ public class StoreRecordService : IStoreRecordService
                 cancellationToken);
 
             await _observationService.PutObservations(fhirResponse.Observations, connection, transaction,
+                cancellationToken);
+
+            await _conditionService.PutConditions(fhirResponse.Conditions, connection, transaction,
                 cancellationToken);
 
 

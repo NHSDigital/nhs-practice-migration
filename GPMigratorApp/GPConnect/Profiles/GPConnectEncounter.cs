@@ -36,12 +36,15 @@ public class GPConnectEncounter
             Subject = Patient(),
             Performer = PrimaryPerformer(),
             Recorder = Recorder(),
-            PeriodStart = DateTime.Parse(_encounter.Period.Start),
-            PeriodEnd = DateTime.Parse(_encounter.Period.End),
-            DurationValue = _encounter.Length.Value,
-            DurationUnit = _encounter.Length.Unit,
-            DurationCode = _encounter.Length.Code
+
+            DurationValue = _encounter.Length?.Value,
+            DurationUnit = _encounter.Length?.Unit,
+            DurationCode = _encounter.Length?.Code
         };
+        if (_encounter.Period?.Start is not null)
+            dto.PeriodStart = DateTime.Parse(_encounter.Period.Start);
+        if (_encounter.Period?.End is not null)
+            dto.PeriodEnd = DateTime.Parse(_encounter.Period.End);
         return dto;
     }
 
@@ -79,7 +82,7 @@ public class GPConnectEncounter
     {
         get
         {
-            return _encounter.Type.FirstOrDefault().Text;
+            return _encounter.Type?.FirstOrDefault()?.Text;
         }
     }
     
