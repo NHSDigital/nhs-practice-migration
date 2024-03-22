@@ -90,8 +90,6 @@ public class GPConnectService : IGPConnectService
 
                 using var reader = new StreamReader(stream, Encoding.UTF8);
 
-                //string text = await File.ReadAllTextAsync("C:\\Users\\Tim\\source\\repos\\GPMigratorApp\\GPMigratorApp\\example.json");
-
                 var fhirstring = await reader.ReadToEndAsync();
                 fhirResponse.Resource = jsonParser.Parse<Resource>(fhirstring);
                 return fhirResponse;

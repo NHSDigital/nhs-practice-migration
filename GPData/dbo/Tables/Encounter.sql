@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Encounter] (
     [Id]            UNIQUEIDENTIFIER NOT NULL,
+    [OriginalId]    NVARCHAR (255)   NOT NULL,
     [Identifier]    NVARCHAR (MAX)   NULL,
     [Status]        NVARCHAR (MAX)   NULL,
     [Type]          NVARCHAR (MAX)   NULL,

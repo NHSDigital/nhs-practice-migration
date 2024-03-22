@@ -7,10 +7,9 @@ namespace GPMigratorApp.Data.Interfaces;
 
 public interface IConditionCommand
 {
-
+    Task<ConditionDTO?> GetConditionAsync(string originalId, CancellationToken cancellationToken,
+        IDbTransaction transaction);
     Task<Guid> InsertConditionAsync(ConditionDTO condition, CancellationToken cancellationToken,
         IDbTransaction transaction);
     
-    Task UpdateLocationAsync(LocationDTO location, CancellationToken cancellationToken,
-        IDbTransaction transaction);
 }

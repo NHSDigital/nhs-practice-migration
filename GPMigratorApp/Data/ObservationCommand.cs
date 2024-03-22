@@ -209,14 +209,14 @@ public class ObservationCommand : IObservationCommand
            		,@Status
            		,@Category
            		,@Code
-           		,(select Id from dbo.Entity where OriginalId = @BasedOn)
+           		,(select Id from dbo.Entity where OriginalId = @BasedOn AND EntityType = @BasedOnType)
                 ,(select Id from dbo.Patient where OriginalId = @SubjectId)
            		,@ContextId
            		,@EffectiveDate
            		,@EffectiveDateFrom
            		,@EffectiveDateTo
            		,@Issued
-           		,(select Id from dbo.Entity where OriginalId = @PerformerId)
+           		,(select Id from dbo.Entity where OriginalId = @PerformerId AND EntityType = @PerformerType)
            		,@Interpretation
            		,@DataAbsentReason
            		,@Comment
@@ -243,6 +243,7 @@ public class ObservationCommand : IObservationCommand
                 Category = observation.Category,
                 Code = observation.Code?.Id,
                 BasedOn = observation.BasedOn?.OriginalId,
+                BasedOnType = observation.BasedOn?.Type,
                 SubjectId = observation.Subject.OriginalId,
                 ContextId = observation.Context?.OriginalId,
                 EffectiveDate = observation.EffectiveDate,
@@ -250,6 +251,7 @@ public class ObservationCommand : IObservationCommand
                 EffectiveDateTo = observation.EffectiveDateTo,
                 Issued = observation.Issued,
                 PerformerId = observation.Performer?.OriginalId,
+                PerformerType = observation.Performer?.Type,
                 Interpretation = observation.Interpretation,
                 DataAbsentReason = observation.DataAbsentReason,
                 Comment = observation.Comment,
@@ -274,6 +276,39 @@ public class ObservationCommand : IObservationCommand
             if (result == 0)
             {
                 throw new DataException("Error: User request was not successful.");
+            }
+            
+            const string insertComponent =
+	            @"INSERT INTO [dbo].[ObservationComponent]
+           		([Id]
+           		,[ObservationId]
+           		,[CodeId]
+           		,[ValueQuantity]
+           		,[ValueQuantityUnit]
+           		)
+     			VALUES
+           		(@Id
+           		,@ObservationId
+           		,@CodeId
+           		,@ValueQuantity
+           		,@ValueQuantityUnit)";
+
+            if (observation.Components == null) return observation.Id;
+            foreach (var componentCommandDefinition in observation.Components.Select(component => new CommandDefinition(insertComponent, new
+                     {
+	                     Id = Guid.NewGuid(),
+	                     ObservationId = observation.Id,
+	                     CodeId = component.Code?.Id,
+	                     ValueQuantity = component.ValueQuantity,
+	                     ValueQuantityUnit = component.ValueQuantityUnit,
+
+                     }, cancellationToken: cancellationToken, transaction: transaction)))
+            {
+	            result = await _connection.ExecuteAsync(componentCommandDefinition);
+	            if (result == 0)
+	            {
+		            throw new DataException("Error: User request was not successful.");
+	            }
             }
 
             return observation.Id;

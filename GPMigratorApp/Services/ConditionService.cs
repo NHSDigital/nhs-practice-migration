@@ -3,6 +3,7 @@ using GPConnect.Provider.AcceptanceTests.Http;
 using GPMigratorApp.Data;
 using GPMigratorApp.Data.Database.Providers.Interfaces;
 using GPMigratorApp.Data.Interfaces;
+using GPMigratorApp.Data.Types;
 using GPMigratorApp.DTOs;
 using GPMigratorApp.Services.Interfaces;
 using Hl7.Fhir.Model;
@@ -20,39 +21,41 @@ public class ConditionService: IConditionService
     }
     
     public async Task PutConditions(IEnumerable<ConditionDTO> conditions,IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)
-    { 
+    {  
         var locationCommand = new ConditionCommand(connection);
-        foreach (var condition in conditions)
+        
+        foreach (var condition in conditions.OrderByDescending(x=> x.AssertedDate.Value))
         {
             if (condition.Code is not null)
                 condition.Code.Id = await _codingService.PutCoding(condition.Code, connection, transaction, cancellationToken);
             
-            await locationCommand.InsertConditionAsync(condition, cancellationToken,transaction);
-            
-            /*var existingRecord = await locationCommand.GetLocationAsync(location.OriginalId, cancellationToken, transaction);
+            var existingRecord = await locationCommand.GetConditionAsync(condition.OriginalId, cancellationToken, transaction);
             if (existingRecord is null)
             {
-               
+                await locationCommand.InsertConditionAsync(condition, cancellationToken,transaction);
             }
             else
             {
-                if (location.Address != null && existingRecord.Address != null)
-                {
-                    location.Address.Id = existingRecord.Address.Id;
-                }
+                //await locationCommand.UpdateLocationAsync(existingRecord, cancellationToken, transaction);
+            }
+        }
+    }
 
-                existingRecord.ODSSiteCode = location.ODSSiteCode;
-                existingRecord.Status = location.Status;
-                existingRecord.OperationalStatus = location.OperationalStatus;
-                existingRecord.Name = location.Name;
-                existingRecord.Alias = location.Alias;
-                existingRecord.Description = location.Description;
-                existingRecord.Type = location.Type;
-                existingRecord.Telecom = location.Telecom;
-                existingRecord.PhysicalType = location.PhysicalType;
-
-                await locationCommand.UpdateLocationAsync(existingRecord, cancellationToken, transaction);
-            }*/
+    private async Task PutCondition(ConditionDTO condition,IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)
+    {
+        var locationCommand = new ConditionCommand(connection);
+        
+        if (condition.Code is not null)
+            condition.Code.Id = await _codingService.PutCoding(condition.Code, connection, transaction, cancellationToken);
+            
+        var existingRecord = await locationCommand.GetConditionAsync(condition.OriginalId, cancellationToken, transaction);
+        if (existingRecord is null)
+        {
+            await locationCommand.InsertConditionAsync(condition, cancellationToken,transaction);
+        }
+        else
+        {
+            //await locationCommand.UpdateLocationAsync(existingRecord, cancellationToken, transaction);
         }
     }
 }

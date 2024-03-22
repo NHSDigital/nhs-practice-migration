@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[ProcedureRequest] (
+﻿CREATE TABLE [dbo].[DiaryEntry] (
     [Id]                         UNIQUEIDENTIFIER NOT NULL,
     [OriginalId]                 NVARCHAR (255)   NULL,
     [Intent]                     INT              NOT NULL,
@@ -24,17 +24,18 @@
     [NoteAuthor]                 UNIQUEIDENTIFIER NULL,
     [EntityId]                   UNIQUEIDENTIFIER NOT NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [FK_ProcedureRequest_Context] FOREIGN KEY ([Context]) REFERENCES [dbo].[Entity] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_Code] FOREIGN KEY ([Code]) REFERENCES [dbo].[Coding] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_Subject] FOREIGN KEY ([Subject]) REFERENCES [dbo].[Patient] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_Encounter] FOREIGN KEY ([Encounter]) REFERENCES [dbo].[Encounter] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_Identifier] FOREIGN KEY ([Requester]) REFERENCES [dbo].[Entity] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_OnBehalfOf] FOREIGN KEY ([OnBehalfOf]) REFERENCES [dbo].[Organization] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_RPerformer] FOREIGN KEY ([Performer]) REFERENCES [dbo].[Entity] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_RequestingOrganization] FOREIGN KEY ([ReasonReference]) REFERENCES [dbo].[Entity] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_ReasonReference] FOREIGN KEY ([SupportingInfo]) REFERENCES [dbo].[Observation] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_Specimen] FOREIGN KEY ([Specimen]) REFERENCES [dbo].[Specimen] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_NoteAuthor] FOREIGN KEY ([NoteAuthor]) REFERENCES [dbo].[Entity] ([Id]),
-    CONSTRAINT [FK_ProcedureRequest_Entity] FOREIGN KEY ([EntityId]) REFERENCES [dbo].[Entity] ([Id])
+    CONSTRAINT [FK_DiaryEntry_Context] FOREIGN KEY ([Context]) REFERENCES [dbo].[Entity] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Requester] FOREIGN KEY ([Requester]) REFERENCES [dbo].[Entity] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Code] FOREIGN KEY ([Code]) REFERENCES [dbo].[Coding] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Subject] FOREIGN KEY ([Subject]) REFERENCES [dbo].[Patient] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Encounter] FOREIGN KEY ([Encounter]) REFERENCES [dbo].[Encounter] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Identifier] FOREIGN KEY ([Requester]) REFERENCES [dbo].[Entity] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_OnBehalfOf] FOREIGN KEY ([OnBehalfOf]) REFERENCES [dbo].[Organization] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Performer] FOREIGN KEY ([Performer]) REFERENCES [dbo].[Entity] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_ReasonReference] FOREIGN KEY ([ReasonReference]) REFERENCES [dbo].[Entity] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_SupportingInfo] FOREIGN KEY ([SupportingInfo]) REFERENCES [dbo].[Observation] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Specimen] FOREIGN KEY ([Specimen]) REFERENCES [dbo].[Specimen] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_NoteAuthor] FOREIGN KEY ([NoteAuthor]) REFERENCES [dbo].[Entity] ([Id]),
+    CONSTRAINT [FK_DiaryEntry_Entity] FOREIGN KEY ([EntityId]) REFERENCES [dbo].[Entity] ([Id])
 );
 

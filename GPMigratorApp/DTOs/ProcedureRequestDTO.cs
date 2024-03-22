@@ -4,31 +4,29 @@ namespace GPMigratorApp.DTOs;
 
 public class ProcedureRequestDTO
 {
-    public string Guid { get; set; }
+    public Guid Id { get; set; }
+    public string OriginalId { get; set; }
+    public int Intent { get; set; }
     public IdentifierDTO? Identifier { get; set; }
     public string? Status { get; set; }
-    public OrganizationDTO? Assigner { get; set; }
-    public OrganizationDTO? RequisitionAssigner { get; set; }
+    public DateTime? AuthoredOn { get; set; }
+    public DateTime? Occurence { get; set; }
     public string? Category{ get; set; }
-    public string? Code{ get; set; }
+    public CodeDTO? Code{ get; set; }
     public PatientDTO? Subject { get; set; }
-    public EpisodeOfCareDTO? ConextEpisodeOfCare { get; set; }
-    public EncounterDTO? ConextEncounter { get; set; }
+    public OutboundRelationship? Context { get; set; }
     public EncounterDTO? Encounter { get; set; }
-    public OrganizationDTO? RequestingOrganization { get; set; }
-    public PracticionerDTO? RequestingPracticioner { get; set; }
+    public OutboundRelationship? Requester{ get; set; }
     public OrganizationDTO? OnBehalfOf { get; set; }
-    public OrganizationDTO? PerformerOrganization { get; set; }
-    public PracticionerDTO? PerformerPracticioner { get; set; }
+    public OutboundRelationship? Performer { get; set; }
     public string? Reason { get; set; }
-    public ConditionDTO? ReasonReferenceCondition { get; set; }
-    public ObservationDTO? ReasonReferenceObservation { get; set; }
+    public OutboundRelationship? ReasonReference{ get; set; }
     public ObservationDTO? SupportingInfo { get; set; }
     public SpecimenDTO? Specimen { get; set; }
     public string? BodySite { get; set; }
     public string? NoteText { get; set; }
     public DateTime? NoteAuthored { get; set; }
-    public PatientDTO? NoteAuthorPatient{ get; set; }
-    public PracticionerDTO? NoteAuthorPracticioner { get; set; }
+    public OutboundRelationship? NoteAuthor{ get; set; }
+    public Guid EntityId { get; set; }
 
 }

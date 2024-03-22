@@ -25,6 +25,8 @@ public class CodingCommand : ICodingCommand
 
     public async Task<CodeDTO?> GetCodingAsync(string? snomedCode, string? readCode,CancellationToken cancellationToken, IDbTransaction transaction)
     {
+
+
 	    string getExisting =
 		    @$"SELECT [{nameof(CodeDTO.Id)}]								= code.Id
                       ,[{nameof(CodeDTO.ReadCode)}]                  	    = code.ReadCode
@@ -36,6 +38,21 @@ public class CodingCommand : ICodingCommand
                   FROM [dbo].[Coding] code
 				  WHERE code.ReadCode = @ReadCode 
 				  AND code.SnomedCode = @SnomedCode";
+	    
+	    if (readCode is null)
+	    {
+		    getExisting =
+			    @$"SELECT [{nameof(CodeDTO.Id)}]								= code.Id
+                      ,[{nameof(CodeDTO.ReadCode)}]                  	    = code.ReadCode
+                      ,[{nameof(CodeDTO.SnomedCode)}]                  		= code.SnomedCode
+                      ,[{nameof(CodeDTO.LocalCode)}]                  		= code.LocalCode
+                      ,[{nameof(CodeDTO.NationalCode)}]                		= code.NationalCode
+                      ,[{nameof(CodeDTO.Description)}]                      = code.Description
+
+                  FROM [dbo].[Coding] code
+				  WHERE code.ReadCode IS NULL 
+				  AND code.SnomedCode = @SnomedCode";
+	    }
         
             var reader = await _connection.QueryMultipleAsync(getExisting, new
             {

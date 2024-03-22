@@ -9,6 +9,7 @@ using GPMigratorApp.Data.Interfaces;
 using GPMigratorApp.GPConnect;
 using GPMigratorApp.Services;
 using GPMigratorApp.Services.Interfaces;
+using Hl7.Fhir.Model;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +52,8 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IObservationService, ObservationService>();
 builder.Services.AddScoped<ICodingService, CodingService>();
 builder.Services.AddScoped<IConditionService, ConditionService>();
+builder.Services.AddScoped<IProcedureRequestService, ProcedureRequestService>();
+builder.Services.AddScoped<IQueryRepository, QueryRepository>();
 
 var app = builder.Build();
 

@@ -7,7 +7,9 @@ public enum EntityTypes
     Patient = 3,
     Practitioner = 4,
     Observation = 5,
-    Condition = 6
+    Condition = 6,
+    DiaryEntry = 7,
+    ProcedureRequest = 8
 }
 
 public static class EntityTypeHelper
@@ -23,6 +25,8 @@ public static class EntityTypeHelper
             "Practitioner" => EntityTypes.Practitioner,
             "Observation" => EntityTypes.Observation,
             "Condition" => EntityTypes.Condition,
+            "DiaryEntry" => EntityTypes.DiaryEntry,
+            "ProcedureRequest" => EntityTypes.ProcedureRequest,
             _ => null
         };
     }

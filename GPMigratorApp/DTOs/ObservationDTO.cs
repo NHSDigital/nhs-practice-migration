@@ -33,5 +33,7 @@ public class ObservationDTO
     public decimal? ReferenceRangeAgeHigh { get; set; } 
     public decimal? ReferenceRangeAgeLow { get; set; } 
     public ObservationDTO? RelatedTo { get; set; } 
+    
+    public List<ObservationComponentDTO>? Components { get; set; } 
     public Guid EntityId { get; set; }
 }

@@ -27,23 +27,23 @@ public class GPConnectCondition : Condition
 
     public ConditionDTO GetDTO()
     {
-        var dto = new ConditionDTO
+        var dto = new ConditionDTO 
         {
             OriginalId = this.Id,
             Identifier = new IdentifierDTO(this.Identifier.FirstOrDefault()),
-            ActualProblem = new OutboundRelationship {OriginalId = this.Extension.FirstOrDefault(x=> x.Url == "https://fhir.nhs.uk/STU3/StructureDefinition/Extension-CareConnect-GPC-ActualProblem-1")?.Value.ToString()},
+            ActualProblem = new OutboundRelationship {OriginalId = this.Extension.FirstOrDefault(x=> x.Url == "https://fhir.nhs.uk/STU3/StructureDefinition/Extension-CareConnect-GPC-ActualProblem-1")?.Value.FirstOrDefault().Value.ToString()},
             ProblemSignificance = this.Extension.FirstOrDefault(x=> x.Url == "https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-ProblemSignificance-1")?.Value.ToString(),
             Episode = null,
             ClinicalStatus = this.ClinicalStatus?.ToString(),
-            VerificationStatus = null,
-            Severity = null,
-            BodySite = null,
+            VerificationStatus = this.VerificationStatus?.ToString(),
+            Severity = this.Severity?.Coding?.FirstOrDefault()?.Code,
+            BodySite = this.BodySite?.FirstOrDefault()?.Coding?.FirstOrDefault()?.Code,
             Subject = _patients?.FirstOrDefault(x=> x.OriginalId == ReferenceHelper.GetId(this.Subject.Reference)),
             Context = null, // TODO ENCOUNTERS
             OnsetAge = null,
             OnsetPeriodStart = null,
             OnsetPeriodEnd = null,
-            AbatementDate = null,
+
             AbatementAge = null,
             AbatementPeriodStart = null,
             AbatementPeriodEnd = null,
@@ -67,27 +67,36 @@ public class GPConnectCondition : Condition
                 dto.Code.SnomedCode =code;
         }
         
-        dto.Evidence = this.Evidence
+        dto.Evidence = this.Evidence?
             .Select(problem =>
                 new OutboundRelationship
                 {
                     Code = problem.Code?.FirstOrDefault()?.Coding?.FirstOrDefault()?.Code,
                     OriginalId = ReferenceHelper.GetId(problem?.Detail?.FirstOrDefault()?.Reference),
                     Type = (int?) EntityTypeHelper.GetEnumForType(ReferenceHelper.GetType(problem?.Detail?.FirstOrDefault()?.Reference))
-                }).ToList();  
-
-        dto.RelatedProblem = this.Extension.Where(x =>
-                x.Url ==
-                "https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-RelatedProblemHeader-1")
-            .Select(x => (ResourceReference) x.Value)
-            .Select(problem =>
-                new OutboundRelationship
-                {
-                    OriginalId = ReferenceHelper.GetId(problem.Reference),
-                    Type = (int?) EntityTypeHelper.GetEnumForType(ReferenceHelper.GetType(problem.Reference))
                 }).ToList();
-        
-        dto.RelatedClinicalConditions = this.Extension.Where(x =>
+        try
+        {
+            var extensions = this.Extension?.Where(x =>
+                x.Url ==
+                "https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-RelatedProblemHeader-1");
+            dto.RelatedProblem = this.Extension?.Where(x =>
+                    x.Url ==
+                    "https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-RelatedProblemHeader-1")
+                .Select(x => (ResourceReference) x.Extension.FirstOrDefault().Value)
+                .Select(problem =>
+                    new OutboundRelationship
+                    {
+                        OriginalId = ReferenceHelper.GetId(problem.Reference),
+                        Type = (int?) EntityTypeHelper.GetEnumForType(ReferenceHelper.GetType(problem.Reference))
+                    }).ToList();
+        }
+        catch (Exception ex)
+        {
+            
+        }
+
+        dto.RelatedClinicalConditions = this.Extension?.Where(x =>
                 x.Url ==
                 "https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-RelatedClinicalContent-1")
             .Select(x => (ResourceReference) x.Value)
@@ -98,7 +107,30 @@ public class GPConnectCondition : Condition
                     Type = (int?) EntityTypeHelper.GetEnumForType(ReferenceHelper.GetType(problem.Reference))
                 }).ToList();
         
-        dto.OnsetDate = (DateTime?) this.Onset?.FirstOrDefault().Value;
+       
+
+        if (this.Onset?.FirstOrDefault().Value is not null)
+        {
+            var success = DateTime.TryParse(this.Onset.ToString(), out var date);
+            if (success)
+                dto.OnsetDate = date;
+            else
+            {
+                dto.OnsetDate = new DateTime(int.Parse(this.Onset.ToString()), 01, 01);
+            }
+        }
+        
+        if (this.Abatement?.FirstOrDefault().Value is not null)
+        {
+            var success = DateTime.TryParse(this.Abatement.ToString(), out var abatementDate);
+            if (success)
+                dto.AbatementDate = abatementDate;
+            else
+            {
+                dto.AbatementDate = new DateTime(int.Parse(this.Abatement.ToString()), 01, 01);
+            }
+        }
+
         return dto;
     }
     private void InitInhertedProperties (object encounter)

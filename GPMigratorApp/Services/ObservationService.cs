@@ -21,6 +21,15 @@ public class ObservationService: IObservationService
         {
             if (observation.Code is not null)
                 observation.Code.Id = await _codingService.PutCoding(observation.Code, connection, transaction, cancellationToken);
+
+            if (observation.Components != null)
+                foreach (var component in observation.Components)
+                {
+                    if (component.Code is not null)
+                        component.Code.Id = await _codingService.PutCoding(component.Code, connection, transaction,
+                            cancellationToken);
+                }
+
             try
             {
                 var existingRecord =

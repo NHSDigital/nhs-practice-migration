@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using FutureNHS.Api.Configuration;
 using GPMigratorApp.Data;
+using GPMigratorApp.Data.Interfaces;
 using GPMigratorApp.GPConnect;
 using GPMigratorApp.Services.Interfaces;
 using Hl7.Fhir.Model;
@@ -20,18 +21,20 @@ namespace GPMigratorApp.Controllers
         private readonly IGPConnectService _gpConnectService;
         private readonly AppSettings _appSettings;
         private readonly IStoreRecordService _storeRecordService;
-
+        private readonly IQueryRepository _queryRepository;
         
-        public HomeController(ILogger<HomeController> logger,IStoreRecordService storeRecordService, IOptionsSnapshot<AppSettings> appSettings, IGPConnectService gpConnectService)
+        public HomeController(ILogger<HomeController> logger,IStoreRecordService storeRecordService, IOptionsSnapshot<AppSettings> appSettings, IGPConnectService gpConnectService,IQueryRepository queryRepository)
         {
             _logger = logger;
             _gpConnectService = gpConnectService;
             _appSettings = appSettings.Value;
             _storeRecordService = storeRecordService;
+            _queryRepository = queryRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
+            var result = await _queryRepository.RunBloodPressureQuery(45, 5,cancellationToken);
             var search = new Search();
             search.NhsNumber = "9730333831";
             return View(search);
@@ -60,11 +63,18 @@ namespace GPMigratorApp.Controllers
             {
                 "9465698490", "9730333831", "9730146896", "9730147019", "9730333939", "5990275439", "9465693839",
                 "9465694819", "9465699012", "9465699896", "9465701998", "9692136701"
+
             };
             if (jsonPatients.Contains(search.NhsNumber))
                 search.Response = await _gpConnectService.GetLocalFile(search.NhsNumber);
 
 
+            foreach (var patient in jsonPatients)
+            {
+                search.Response = await _gpConnectService.GetLocalFile(patient);
+                await _storeRecordService.StoreRecord(search.Response, cancellationToken);
+            }
+            
 
             if (!jsonPatients.Contains(search.NhsNumber))
             {  
