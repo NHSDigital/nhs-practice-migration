@@ -53,6 +53,7 @@ builder.Services.AddScoped<IObservationService, ObservationService>();
 builder.Services.AddScoped<ICodingService, CodingService>();
 builder.Services.AddScoped<IConditionService, ConditionService>();
 builder.Services.AddScoped<IProcedureRequestService, ProcedureRequestService>();
+builder.Services.AddScoped<IImmunizationService, ImmunizationService>();
 builder.Services.AddScoped<IQueryRepository, QueryRepository>();
 
 var app = builder.Build();

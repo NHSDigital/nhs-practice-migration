@@ -21,10 +21,11 @@ public class StoreRecordService : IStoreRecordService
     private readonly IObservationService _observationService;
     private readonly IConditionService _conditionService;
     private readonly IProcedureRequestService _procedureRequestService;
+    private readonly IImmunizationService _immunizationService;
     
     public StoreRecordService(IAzureSqlDbConnectionFactory connectionFactory, IOrganizationService organizationService,
         ILocationService locationService, IPracticionerService practicionerService, IPatientService patientService, IObservationService observationService, IConditionService conditionService,
-        IProcedureRequestService procedureRequestService)
+        IProcedureRequestService procedureRequestService, IImmunizationService immunizationService)
     {
         _connectionFactory = connectionFactory;
         _organizationService = organizationService;
@@ -34,7 +35,8 @@ public class StoreRecordService : IStoreRecordService
         _observationService = observationService;
         _conditionService = conditionService;
         _procedureRequestService = procedureRequestService;
-   
+        _immunizationService = immunizationService;
+
     }
 
     public async Task StoreRecord(FhirResponse fhirResponse, CancellationToken cancellationToken)
@@ -66,6 +68,8 @@ public class StoreRecordService : IStoreRecordService
             await _conditionService.PutConditions(fhirResponse.Conditions, connection, transaction,cancellationToken);
 
             await _procedureRequestService.PutProcedureRequests(fhirResponse.ProcedureRequests, connection, transaction,cancellationToken);
+            
+            await _immunizationService.PutImmunizations(fhirResponse.Immunizations, connection, transaction,cancellationToken);
             transaction.Commit();
         }
         catch (Exception ex)

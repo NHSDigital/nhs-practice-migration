@@ -77,6 +77,319 @@ USE [$(DatabaseName)];
 
 
 GO
+PRINT N'Dropping Foreign Key [dbo].[FK__Immunizat__Autho__75A278F5]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK__Immunizat__Autho__75A278F5];
+
+
+GO
+PRINT N'Dropping Foreign Key [dbo].[FK_Immunization_Entity]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK_Immunization_Entity];
+
+
+GO
+PRINT N'Dropping Foreign Key [dbo].[FK__Immunizat__NoteA__73BA3083]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK__Immunizat__NoteA__73BA3083];
+
+
+GO
+PRINT N'Dropping Foreign Key [dbo].[FK__Immunizat__Encou__70DDC3D8]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK__Immunizat__Encou__70DDC3D8];
+
+
+GO
+PRINT N'Dropping Foreign Key [dbo].[FK__Immunizat__Actor__71D1E811]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK__Immunizat__Actor__71D1E811];
+
+
+GO
+PRINT N'Dropping Foreign Key [dbo].[FK__Immunizat__Locat__72C60C4A]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK__Immunizat__Locat__72C60C4A];
+
+
+GO
+PRINT N'Dropping Foreign Key [dbo].[FK__Immunizat__Subje__6FE99F9F]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK__Immunizat__Subje__6FE99F9F];
+
+
+GO
+PRINT N'Dropping Foreign Key [dbo].[FK__Immunizat__React__74AE54BC]...';
+
+
+GO
+ALTER TABLE [dbo].[Immunization] DROP CONSTRAINT [FK__Immunizat__React__74AE54BC];
+
+
+GO
+/*
+The type for column Id in table [dbo].[Immunization] is currently  NVARCHAR (255) NOT NULL but is being changed to  UNIQUEIDENTIFIER NOT NULL. Data loss could occur and deployment may fail if the column contains data that is incompatible with type  UNIQUEIDENTIFIER NOT NULL.
+
+The type for column Route in table [dbo].[Immunization] is currently  NVARCHAR (255) NULL but is being changed to  UNIQUEIDENTIFIER NULL. Data loss could occur and deployment may fail if the column contains data that is incompatible with type  UNIQUEIDENTIFIER NULL.
+
+The type for column Site in table [dbo].[Immunization] is currently  NVARCHAR (255) NULL but is being changed to  UNIQUEIDENTIFIER NULL. Data loss could occur and deployment may fail if the column contains data that is incompatible with type  UNIQUEIDENTIFIER NULL.
+
+The type for column VaccinationCode in table [dbo].[Immunization] is currently  NVARCHAR (255) NULL but is being changed to  UNIQUEIDENTIFIER NULL. Data loss could occur and deployment may fail if the column contains data that is incompatible with type  UNIQUEIDENTIFIER NULL.
+
+The type for column VaccinationProcedure in table [dbo].[Immunization] is currently  NVARCHAR (255) NULL but is being changed to  UNIQUEIDENTIFIER NULL. Data loss could occur and deployment may fail if the column contains data that is incompatible with type  UNIQUEIDENTIFIER NULL.
+*/
+GO
+PRINT N'Starting rebuilding table [dbo].[Immunization]...';
+
+
+GO
+BEGIN TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+SET XACT_ABORT ON;
+
+CREATE TABLE [dbo].[tmp_ms_xx_Immunization] (
+    [Id]                   UNIQUEIDENTIFIER NOT NULL,
+    [OriginalId]           NVARCHAR (255)   NULL,
+    [Status]               NVARCHAR (255)   NULL,
+    [Type]                 NVARCHAR (255)   NULL,
+    [Class]                NVARCHAR (255)   NULL,
+    [SubjectId]            UNIQUEIDENTIFIER NULL,
+    [EncounterId]          UNIQUEIDENTIFIER NULL,
+    [ActorId]              UNIQUEIDENTIFIER NULL,
+    [LocationId]           UNIQUEIDENTIFIER NOT NULL,
+    [ParentPresent]        BIT              NULL,
+    [RecordedDate]         DATETIME         NULL,
+    [Date]                 DATETIME         NULL,
+    [PrimarySource]        BIT              NULL,
+    [LotNumber]            NVARCHAR (255)   NULL,
+    [Site]                 UNIQUEIDENTIFIER NULL,
+    [Route]                UNIQUEIDENTIFIER NULL,
+    [RouteText]            NVARCHAR (255)   NULL,
+    [NoteAuthorId]         UNIQUEIDENTIFIER NULL,
+    [NoteText]             NVARCHAR (MAX)   NULL,
+    [NoteDate]             DATETIME         NULL,
+    [ExpirationDate]       DATETIME         NULL,
+    [VaccinationProcedure] UNIQUEIDENTIFIER NULL,
+    [VaccinationCode]      UNIQUEIDENTIFIER NULL,
+    [DoseQuantity]         DECIMAL (18, 2)  NULL,
+    [ReactionReported]     BIT              NULL,
+    [ReactionDetailId]     UNIQUEIDENTIFIER NULL,
+    [ReactionDate]         DATETIME         NULL,
+    [DoseSequence]         INT              NULL,
+    [Description]          NVARCHAR (MAX)   NULL,
+    [AuthorityId]          UNIQUEIDENTIFIER NULL,
+    [Series]               NVARCHAR (255)   NULL,
+    [SeriesDoses]          INT              NULL,
+    [TargetDisease]        NVARCHAR (255)   NULL,
+    [DoseStatus]           NVARCHAR (255)   NULL,
+    [DoseStatusReason]     NVARCHAR (255)   NULL,
+    [EntityId]             UNIQUEIDENTIFIER NOT NULL,
+    CONSTRAINT [tmp_ms_xx_constraint_PK__Immuniza__A2B5777C37B1E40D1] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+IF EXISTS (SELECT TOP 1 1 
+           FROM   [dbo].[Immunization])
+    BEGIN
+        INSERT INTO [dbo].[tmp_ms_xx_Immunization] ([Id], [Status], [Type], [Class], [SubjectId], [EncounterId], [ActorId], [LocationId], [ParentPresent], [RecordedDate], [Date], [PrimarySource], [LotNumber], [Site], [Route], [RouteText], [NoteAuthorId], [NoteText], [NoteDate], [ExpirationDate], [VaccinationProcedure], [VaccinationCode], [DoseQuantity], [ReactionReported], [ReactionDetailId], [ReactionDate], [DoseSequence], [Description], [AuthorityId], [Series], [SeriesDoses], [TargetDisease], [DoseStatus], [DoseStatusReason], [EntityId])
+        SELECT   [Id],
+                 [Status],
+                 [Type],
+                 [Class],
+                 [SubjectId],
+                 [EncounterId],
+                 [ActorId],
+                 [LocationId],
+                 [ParentPresent],
+                 [RecordedDate],
+                 [Date],
+                 [PrimarySource],
+                 [LotNumber],
+                 [Site],
+                 [Route],
+                 [RouteText],
+                 [NoteAuthorId],
+                 [NoteText],
+                 [NoteDate],
+                 [ExpirationDate],
+                 [VaccinationProcedure],
+                 [VaccinationCode],
+                 [DoseQuantity],
+                 [ReactionReported],
+                 [ReactionDetailId],
+                 [ReactionDate],
+                 [DoseSequence],
+                 [Description],
+                 [AuthorityId],
+                 [Series],
+                 [SeriesDoses],
+                 [TargetDisease],
+                 [DoseStatus],
+                 [DoseStatusReason],
+                 [EntityId]
+        FROM     [dbo].[Immunization]
+        ORDER BY [Id] ASC;
+    END
+
+DROP TABLE [dbo].[Immunization];
+
+EXECUTE sp_rename N'[dbo].[tmp_ms_xx_Immunization]', N'Immunization';
+
+EXECUTE sp_rename N'[dbo].[tmp_ms_xx_constraint_PK__Immuniza__A2B5777C37B1E40D1]', N'PK__Immuniza__A2B5777C37B1E40D', N'OBJECT';
+
+COMMIT TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__Autho__75A278F5]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__Autho__75A278F5] FOREIGN KEY ([AuthorityId]) REFERENCES [dbo].[Organization] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK_Immunization_Entity]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK_Immunization_Entity] FOREIGN KEY ([EntityId]) REFERENCES [dbo].[Entity] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__NoteA__73BA3083]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__NoteA__73BA3083] FOREIGN KEY ([NoteAuthorId]) REFERENCES [dbo].[Practicioner] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__Encou__70DDC3D8]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__Encou__70DDC3D8] FOREIGN KEY ([EncounterId]) REFERENCES [dbo].[Encounter] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__Actor__71D1E811]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__Actor__71D1E811] FOREIGN KEY ([ActorId]) REFERENCES [dbo].[Practicioner] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__Locat__72C60C4A]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__Locat__72C60C4A] FOREIGN KEY ([LocationId]) REFERENCES [dbo].[Location] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__Subje__6FE99F9F]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__Subje__6FE99F9F] FOREIGN KEY ([SubjectId]) REFERENCES [dbo].[Patient] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__React__74AE54BC]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__React__74AE54BC] FOREIGN KEY ([ReactionDetailId]) REFERENCES [dbo].[Observation] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__Route]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__Route] FOREIGN KEY ([Route]) REFERENCES [dbo].[Coding] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__Site]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__Site] FOREIGN KEY ([Site]) REFERENCES [dbo].[Coding] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__VaccinationCode]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__VaccinationCode] FOREIGN KEY ([VaccinationCode]) REFERENCES [dbo].[Coding] ([Id]);
+
+
+GO
+PRINT N'Creating Foreign Key [dbo].[FK__Immunizat__VaccinationProcedure]...';
+
+
+GO
+WAITFOR DELAY '00:00.010';
+
+ALTER TABLE [dbo].[Immunization] WITH NOCHECK
+    ADD CONSTRAINT [FK__Immunizat__VaccinationProcedure] FOREIGN KEY ([VaccinationProcedure]) REFERENCES [dbo].[Coding] ([Id]);
+
+
+GO
 BEGIN
 	-- Disable constraints for all tables:
 	EXEC sp_msforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT all'
@@ -93,6 +406,40 @@ BEGIN
 	EXEC sp_msforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all';	
 END 
 GO
+
+GO
+PRINT N'Checking existing data against newly created constraints';
+
+
+GO
+USE [$(DatabaseName)];
+
+
+GO
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__Autho__75A278F5];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK_Immunization_Entity];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__NoteA__73BA3083];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__Encou__70DDC3D8];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__Actor__71D1E811];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__Locat__72C60C4A];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__Subje__6FE99F9F];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__React__74AE54BC];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__Route];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__Site];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__VaccinationCode];
+
+ALTER TABLE [dbo].[Immunization] WITH CHECK CHECK CONSTRAINT [FK__Immunizat__VaccinationProcedure];
+
 
 GO
 PRINT N'Update complete.';
