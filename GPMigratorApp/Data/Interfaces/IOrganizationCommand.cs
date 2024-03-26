@@ -1,6 +1,7 @@
 using System.Data;
 using GPMigratorApp.Data.IntermediaryModels;
 using GPMigratorApp.DTOs;
+using GPMigratorApp.Models;
 using Microsoft.Data.SqlClient;
 
 namespace GPMigratorApp.Data.Interfaces;
@@ -15,4 +16,7 @@ public interface IOrganizationCommand
     
     Task<Guid> UpdateOrganizationAsync(OrganizationDTO organization, CancellationToken cancellationToken,
         IDbTransaction transaction);
+    
+    Task<PaginatedData<OrganizationDTO>> GetOrganizationsPaginatedAsync(int offset, int limit,
+        CancellationToken cancellationToken);
 }

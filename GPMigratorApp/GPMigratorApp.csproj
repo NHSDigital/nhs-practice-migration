@@ -12,7 +12,7 @@
     <Folder Include="GPConnect\Cache" />
     <Folder Include="GPConnect\Data" />
     <Folder Include="GPConnect\Http\" />
-    <Folder Include="Views\Patient\" />
+    <Folder Include="Views\Shared\Components\Observations\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +56,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Views\DatabaseViewer\Index.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\Observation\Index.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\Organization\Index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

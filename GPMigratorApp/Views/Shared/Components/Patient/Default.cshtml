@@ -9,8 +9,24 @@
             NHS Number
         </dt>
         <dd class="nhsuk-summary-list__value">
-            @Model.NhsNumber - @Model.NHSNumberStatus
-        </dd>
+                 @if (@Model.NhsNumber != null)
+                 {
+                     @Model.NhsNumber
+                 }
+                 else
+                 {
+                     <span>NHS Number cannot be null</span>
+                 }
+                 -
+                 @if (@Model.NHSNumberStatus != null)
+                 {
+                     @Model.NHSNumberStatus
+                 }
+                 else
+                 {
+                     <span>NHS Number status cannot be null</span>
+                 }
+             </dd>
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
@@ -18,7 +34,7 @@
         </dt>
         <dd class="nhsuk-summary-list__value">
             @Model.Title @Model.GivenName @Model.Surname
-        </dd>
+       </dd>
     </div>
 
     <div class="nhsuk-summary-list__row">

@@ -20,12 +20,11 @@ public class PracticionerRoleCommand : IPracticionerRoleCommand
     {
         _connection = connection;
     }
-
-
+    
     public async Task<PracticionerRoleDTO?> GetPracticionerRoleAsync(string originalId, CancellationToken cancellationToken, IDbTransaction transaction)
     {
 	    string getExisting =
-		    @$"SELECT [{nameof(PracticionerRoleDTO.Id)}]						= pracRole.Id
+		    @$"SELECT  [{nameof(PracticionerRoleDTO.Id)}]						= pracRole.Id
                       ,[{nameof(PracticionerRoleDTO.OriginalId)}]               = pracRole.OriginalId
                       ,[{nameof(PracticionerRoleDTO.Active)}]                   = pracRole.Active
                       ,[{nameof(PracticionerRoleDTO.PeriodStart)}]              = pracRole.PeriodStart

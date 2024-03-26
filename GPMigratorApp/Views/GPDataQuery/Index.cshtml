@@ -1,0 +1,16 @@
+@using Newtonsoft.Json
+@using GPMigratorApp.ViewComponents
+@using GPMigratorApp.DTOs
+@model IEnumerable<GPMigratorApp.QueryDTOs.BloodPressureQuery>
+
+<div class="nhsuk-width-container">
+    <h1>GP Data Queries</h1>
+    <div class="nhsuk-tabs__panel" id="patient">
+        <div>
+            <h2 class="">Patient</h2>
+                          
+            @await Component.InvokeAsync(nameof(GPDataQuery))
+                            
+        </div>
+    </div>
+</div>

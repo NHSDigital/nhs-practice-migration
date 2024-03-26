@@ -216,17 +216,6 @@ public class PatientCommand : IPatientCommand
 	            NhsNumber = nhsNumber
             }
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             );
             var patients = reader.Read<PatientDTO, AddressDTO?, OrganizationDTO?, PracticionerDTO?, PatientDTO>(
                 (patient, address, organization, practicioner) =>

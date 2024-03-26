@@ -1,0 +1,70 @@
+@using Hl7.Fhir.Model
+@using GPMigratorApp.GPConnect.Helpers
+@using GPMigratorApp.DTOs
+@model IEnumerable<GPMigratorApp.DTOs.OrganizationDTO>
+
+<table role="table" class="nhsuk-table-responsive">
+  <caption class="nhsuk-table__caption">All Organizations</caption>
+  <thead role="rowgroup" class="nhsuk-table__head">
+  <tr role="row">
+    <th role="columnheader" class="" scope="col"> 
+      Name
+    </th>
+    <th role="columnheader" class="" scope="col">
+      ID
+    </th>
+    <th role="columnheader" class="" scope="col">
+      Entity ID
+    </th>
+    <th role="columnheader" class="" scope="col">
+      Original ID
+    </th>
+    <th role="columnheader" class="" scope="col">
+      Postcode
+    </th>
+    <th role="columnheader" class="" scope="col">
+      Address ID
+    </th>
+  </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+  
+
+@foreach (var organization in Model)
+{
+    <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Name</dt>
+            <dd class="nhsuk-summary-list__value">@organization.Name</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">ID</dt>
+            <dd class="nhsuk-summary-list__value">@organization.Id</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Entity ID</dt>
+            <dd class="nhsuk-summary-list__value">@organization.EntityId</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Original ID</dt>
+            <dd class="nhsuk-summary-list__value">@organization.OriginalId</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Postcode</dt>
+            <dd class="nhsuk-summary-list__value">@organization.Address?.Postcode</dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">Address ID</dt>
+            <dd class="nhsuk-summary-list__value">@organization.Address?.Id</dd>
+        </div>
+    </dl>
+}
+  
+
+  </tbody>
+</table>

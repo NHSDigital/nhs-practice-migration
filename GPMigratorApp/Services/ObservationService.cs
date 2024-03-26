@@ -3,15 +3,29 @@ using GPMigratorApp.Data;
 using GPMigratorApp.Data.Interfaces;
 using GPMigratorApp.DTOs;
 using GPMigratorApp.Services.Interfaces;
+using GPMigratorApp.Data.Database.Providers.Interfaces;
+using System.Linq;
+using GPMigratorApp.Models;
 
 namespace GPMigratorApp.Services;
 
 public class ObservationService: IObservationService
 {
     private readonly ICodingService _codingService;
-    public ObservationService(ICodingService codingService)
+    private readonly IAzureSqlDbConnectionFactory _connectionFactory;
+    public ObservationService(ICodingService codingService, IAzureSqlDbConnectionFactory connectionFactory)
     {
         _codingService = codingService;
+        _connectionFactory = connectionFactory;
+    }
+    
+    public async Task<PaginatedData<ObservationDTO>>  GetAllObservationsPaginatedAsync(Guid patientId, int offset, int limit, CancellationToken cancellationToken)
+    {
+        var connection = await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
+        var observationCommand = new ObservationCommand(connection);
+        var observation = await observationCommand.GetObservationsPaginatedAsync(patientId, offset, limit, cancellationToken);
+
+        return observation;
     }
     
     public async Task PutObservations(IEnumerable<ObservationDTO> observations, IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)

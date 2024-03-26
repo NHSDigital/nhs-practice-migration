@@ -26,7 +26,8 @@
   {
     <tr role="row" class="nhsuk-table__row">
     <td role="cell" class="nhsuk-table__cell">
-      <span class="nhsuk-table-responsive__heading">ID </span>@practicionerRole.Practicioner.FullName
+      <span class="nhsuk-table-responsive__heading">ID </span>
+       <a href=@Url.Action("Index","Practicioner", new{originalId=@practicionerRole.OriginalId})>@practicionerRole.Practicioner.FullName</a>
     </td>
       <td role="cell" class="nhsuk-table__cell">
         <span class="nhsuk-table-responsive__heading">ID</span>@practicionerRole.Practicioner.Id

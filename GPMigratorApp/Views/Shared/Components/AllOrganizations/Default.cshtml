@@ -1,25 +1,23 @@
 @using Hl7.Fhir.Model
 @using GPMigratorApp.GPConnect.Helpers
 @using GPMigratorApp.DTOs
+@using GPMigratorApp.ViewComponents
 @model IEnumerable<GPMigratorApp.DTOs.OrganizationDTO>
 
 <table role="table" class="nhsuk-table-responsive">
   <caption class="nhsuk-table__caption">All Organizations</caption>
   <thead role="rowgroup" class="nhsuk-table__head">
-    <tr role="row">
-      <th role="columnheader" class="" scope="col">
-        Organization ID
-      </th>
-      <th role="columnheader" class="" scope="col">
-        ODS Code
-      </th>
-      <th role="columnheader" class="" scope="col">
-       Organization Name
-      </th>
-       <th role="columnheader" class="" scope="col">
-                    Telecom
-                  </th>
-    </tr>
+  <tr role="row">
+    <th role="columnheader" class="" scope="col">
+      Organization Name
+    </th>
+    <th role="columnheader" class="" scope="col">
+      ODS Code
+    </th>
+    <th role="columnheader" class="" scope="col">
+      Phone number
+    </th>
+  </tr>
   </thead>
   <tbody class="nhsuk-table__body">
   
@@ -27,16 +25,14 @@
   {
     <tr role="row" class="nhsuk-table__row">
       <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">ID</span>@organization.Id
+        <span class="nhsuk-table-responsive__heading">ID</span>
+        <a href=@Url.Action("Organization","Organization", new{originalId=@organization.OriginalId})>@organization.Name</a>
       </td>
       <td role="cell" class="nhsuk-table__cell">
         <span class="nhsuk-table-responsive__heading">ODS Code </span>@organization.ODSCode
       </td>
       <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">Name </span>@organization.Name
-      </td>
-      <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">Telecom </span>@organization.Telecom
+        <span class="nhsuk-table-responsive__heading">Phone number </span>@organization.Telecom
       </td>
     </tr>
   }

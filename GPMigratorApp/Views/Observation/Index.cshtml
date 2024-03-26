@@ -1,0 +1,57 @@
+﻿@using Newtonsoft.Json
+@using GPMigratorApp.ViewComponents
+@using Microsoft.AspNetCore.StaticFiles.Infrastructure
+@model ObservationViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="nhsuk-width-container">
+    <div>
+        <h2 class="">Observations</h2>
+        <p>Total observations for this patient: @Model.Pagination.TotalItems</p>
+        @Html.Partial("Observation", @Model.Observations)
+    </div>
+</div>
+
+<style>
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination a {
+        color: #007bff;
+        text-decoration: none;
+        padding: 8px 16px;
+        margin: 0 4px;
+        border: 1px solid #007bff;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .pagination a.active,
+    .pagination a:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+</style>
+
+
+
+<div class="pagination">
+    @if (Model.Pagination.HasPreviousPage)
+    {
+        <a href="@Url.Action("Index", new { page = Model.Pagination.CurrentPage - 1, patientId = Model.PatientId })">Previous</a>
+    }
+
+    @for (int i = Model.Pagination.StartPage; i <= Model.Pagination.EndPage; i++)
+    {
+        <a href="@Url.Action("Index", new { page = i, patientId = Model.PatientId })" class="@(i == Model.Pagination.CurrentPage ? "active" : "")">@i</a>
+    }
+
+    @if (Model.Pagination.HasNextPage)
+    {
+        <a href="@Url.Action("Index", new { page = Model.Pagination.CurrentPage + 1, patientId = Model.PatientId })">Next</a>
+    }
+</div>

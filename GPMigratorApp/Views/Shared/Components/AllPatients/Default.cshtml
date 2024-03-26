@@ -26,7 +26,7 @@
   {
     <tr role="row" class="nhsuk-table__row">
       <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">Patient Name</span>@patient.FullName
+        <a href=@Url.Action("Index","Observation", new{patientID=@patient.Id})>@patient.FullName</a>
       </td>
       <td role="cell" class="nhsuk-table__cell">
         <span class="nhsuk-table-responsive__heading">DOB </span>@patient.DateOfBirthUTC.ToString("dd/MM/yyyy") 

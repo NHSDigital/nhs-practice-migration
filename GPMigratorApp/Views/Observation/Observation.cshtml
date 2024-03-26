@@ -1,0 +1,49 @@
+@using Hl7.Fhir.Model
+@using GPMigratorApp.GPConnect.Helpers
+@using GPMigratorApp.DTOs
+@model IEnumerable<GPMigratorApp.DTOs.ObservationDTO>
+
+<table role="table" class="nhsuk-table-responsive">
+  <caption class="nhsuk-table__caption">All Observations</caption>
+  <thead role="rowgroup" class="nhsuk-table__head">
+    <tr role="row">
+      <th role="columnheader" class="" scope="col"> 
+        Effective data
+      </th>
+      <th role="columnheader" class="" scope="col">
+        Comment
+      </th>
+      <th role="columnheader" class="" scope="col">
+       Entity ID
+      </th>
+       <th role="columnheader" class="" scope="col">
+                   Original ID
+                  </th>
+    </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+  
+  @foreach (var observation in Model)
+  {
+    <tr role="row" class="nhsuk-table__row">
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">ID</span>@observation.EffectiveDate
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">ODS Code </span>@observation.Comment
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">Name </span>@observation.EntityId
+      </td>
+      <td role="cell" class="nhsuk-table__cell">
+        <span class="nhsuk-table-responsive__heading">Telecom </span>@observation.OriginalId
+      </td>
+      <td>
+      
+      </td>
+    </tr>
+  }
+  
+
+  </tbody>
+</table>

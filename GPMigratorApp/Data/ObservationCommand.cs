@@ -1,31 +1,72 @@
 using System.Data;
 using Dapper;
-using GPMigratorApp.Data.Database.Providers.Interfaces;
 using GPMigratorApp.Data.Interfaces;
-using GPMigratorApp.Data.IntermediaryModels;
 using GPMigratorApp.Data.Types;
 using GPMigratorApp.DTOs;
-using Hl7.Fhir.Model;
-using Hl7.Fhir.Utility;
-using Microsoft.Data.SqlClient;
+using GPMigratorApp.Models;
 using Task = System.Threading.Tasks.Task;
+
+
 
 namespace GPMigratorApp.Data;
 
 public class ObservationCommand : IObservationCommand
 {
-    private readonly IDbConnection _connection;
-    
-    public ObservationCommand(IDbConnection connection)
-    {
-        _connection = connection;
-    }
+	private readonly IDbConnection _connection;
+
+	public ObservationCommand(IDbConnection connection)
+	{
+		_connection = connection;
+	}
 
 
-    public async Task<ObservationDTO?> GetObservationAsync(string originalId, CancellationToken cancellationToken, IDbTransaction transaction)
-    {
-	    string getExisting =
-		    @$"SELECT
+	public async Task<PaginatedData<ObservationDTO>> GetObservationsPaginatedAsync(Guid patientId, int offset, int limit, CancellationToken cancellationToken)
+	{
+		string getExisting =
+			@$"SELECT
+		   			   [{nameof(ObservationDTO.Id)}]							= observation.Id
+                      ,[{nameof(ObservationDTO.OriginalId)}]                  	= observation.OriginalId
+      				  ,[{nameof(ObservationDTO.Status)}]                  		= observation.Status
+      				  ,[{nameof(ObservationDTO.Category)}]                  	= observation.Category
+      				  ,[{nameof(ObservationDTO.Context)}]                  		= observation.ContextId
+      				  ,[{nameof(ObservationDTO.EffectiveDate)}]                 = observation.EffectiveDate
+      				  ,[{nameof(ObservationDTO.EffectiveDateFrom)}]             = observation.EffectiveDateFrom
+      				  ,[{nameof(ObservationDTO.EffectiveDateTo)}]               = observation.EffectiveDateTo
+      				  ,[{nameof(ObservationDTO.Issued)}]                  		= observation.Issued
+      				  ,[{nameof(ObservationDTO.Interpretation)}]                = observation.Interpretation
+      				  ,[{nameof(ObservationDTO.DataAbsentReason)}]              = observation.DataAbsentReason
+      				  ,[{nameof(ObservationDTO.Comment)}]                  		= observation.Comment
+      				  ,[{nameof(ObservationDTO.BodySite)}]                  	= observation.BodySite
+      				  ,[{nameof(ObservationDTO.Method)}]                  		= observation.Method
+      				  ,[{nameof(ObservationDTO.ReferenceRangeLow)}]             = observation.ReferenceRangeLow
+      				  ,[{nameof(ObservationDTO.ReferenceRangeHigh)}]            = observation.ReferenceRangeHigh
+      				  ,[{nameof(ObservationDTO.ReferenceRangeType)}]            = observation.ReferenceRangeType
+      				  ,[{nameof(ObservationDTO.ReferenceRangeAppliesTo)}]       = observation.ReferenceRangeAppliesTo
+      				  ,[{nameof(ObservationDTO.ReferenceRangeAgeHigh)}]         = observation.ReferenceRangeAgeHigh
+      				  ,[{nameof(ObservationDTO.ReferenceRangeAgeLow)}]          = observation.ReferenceRangeAgeLow
+      				  ,[{nameof(ObservationDTO.EntityId)}]                  	= observation.Entityid
+					FROM Observation observation
+					WHERE SubjectId = @PatientId
+					ORDER BY EffectiveDate DESC
+					OFFSET @Offset ROWS
+					FETCH NEXT @Limit ROWS ONLY
+
+					SELECT COUNT (*)
+					FROM Observation 
+					WHERE SubjectId = @PatientId ;";
+		
+		var reader = await _connection.QueryMultipleAsync(getExisting, new { PatientId = patientId, Offset = offset, Limit = limit });
+		var observations = reader.Read<ObservationDTO>();
+		var count = await reader.ReadFirstAsync<int>();
+
+		return new PaginatedData<ObservationDTO>(count, observations);
+	}
+
+	public async Task<ObservationDTO?> GetObservationAsync(string originalId, CancellationToken cancellationToken,
+			IDbTransaction transaction)
+		{
+			string getExisting =
+				@$"SELECT
       				   [{nameof(ObservationDTO.Id)}]							= observation.Id
                       ,[{nameof(ObservationDTO.OriginalId)}]                  	= observation.OriginalId
       				  ,[{nameof(ObservationDTO.Status)}]                  		= observation.Status
@@ -115,45 +156,54 @@ public class ObservationCommand : IObservationCommand
 				  LEFT JOIN [dbo].[Entity] performer ON performer.Id = observation.PerformerId
   				  LEFT JOIN [dbo].[Observation] relatedTo ON relatedTo.Id = observation.RelatedTo
 				  WHERE observation.OriginalId = @OriginalId";
-        
-            var reader = await _connection.QueryMultipleAsync(getExisting, new
-            {
-                OriginalId = originalId
-            }, transaction: transaction);
-            var observations = reader.Read<ObservationDTO, CodeDTO, OutboundRelationship?, PatientDTO?, OutboundRelationship?,ObservationDTO?, ObservationDTO >(
-                (observation,code, basedOn, subject, performer, relatedTo ) =>
-                {
-	                observation.Code = code;
-	                
-	                if (basedOn is not null)
-                    {
-	                    observation.BasedOn = basedOn;
-                    }
-	                if (subject is not null)
-	                {
-		                observation.Subject = subject;
-	                }
-	                if (basedOn is not null)
-	                {
-		                observation.Performer = performer;
-	                }
-	                if (basedOn is not null)
-	                {
-		                observation.RelatedTo = relatedTo;
-	                }
-	                
-	                return observation;
-                }, splitOn: $"{nameof(OutboundRelationship.Id)},{nameof(PatientDTO.Id)},{nameof(PracticionerDTO.Id)},{nameof(ObservationDTO.Id)}");
 
-            return observations.FirstOrDefault();
-    }
+			var reader = await _connection.QueryMultipleAsync(getExisting, new
+			{
+				OriginalId = originalId
+			}, transaction: transaction);
+			var observations =
+				reader
+					.Read<ObservationDTO, CodeDTO, OutboundRelationship?, PatientDTO?, OutboundRelationship?,
+						ObservationDTO?, ObservationDTO>(
+						(observation, code, basedOn, subject, performer, relatedTo) =>
+						{
+							observation.Code = code;
 
-    public async Task<Guid> InsertObservationAsync(ObservationDTO observation, CancellationToken cancellationToken, IDbTransaction transaction)
-    {
-	    observation.Id = Guid.NewGuid();
-	    observation.EntityId = Guid.NewGuid();
-                    
-        var entity = @"INSERT INTO [dbo].[Entity]
+							if (basedOn is not null)
+							{
+								observation.BasedOn = basedOn;
+							}
+
+							if (subject is not null)
+							{
+								observation.Subject = subject;
+							}
+
+							if (basedOn is not null)
+							{
+								observation.Performer = performer;
+							}
+
+							if (basedOn is not null)
+							{
+								observation.RelatedTo = relatedTo;
+							}
+
+							return observation;
+						},
+						splitOn:
+						$"{nameof(OutboundRelationship.Id)},{nameof(PatientDTO.Id)},{nameof(PracticionerDTO.Id)},{nameof(ObservationDTO.Id)}");
+
+			return observations.FirstOrDefault();
+		}
+
+		public async Task<Guid> InsertObservationAsync(ObservationDTO observation, CancellationToken cancellationToken,
+			IDbTransaction transaction)
+		{
+			observation.Id = Guid.NewGuid();
+			observation.EntityId = Guid.NewGuid();
+
+			var entity = @"INSERT INTO [dbo].[Entity]
                         ([Id],
                          [OriginalId],
                         [EntityType])
@@ -161,18 +211,18 @@ public class ObservationCommand : IObservationCommand
                         (@Id,
                         @OriginalId,
                         @Type)";
-                    
-        var entityDefinition = new CommandDefinition(entity, new
-        {
-            Id = observation.EntityId,
-            Type = EntityTypes.Observation,
-            OriginalId = observation.OriginalId
-        }, cancellationToken: cancellationToken, transaction: transaction);
-                    
-        await _connection.ExecuteAsync(entityDefinition);
 
-        const string insertObservation =
-                @"INSERT INTO [dbo].[Observation]
+			var entityDefinition = new CommandDefinition(entity, new
+			{
+				Id = observation.EntityId,
+				Type = EntityTypes.Observation,
+				OriginalId = observation.OriginalId
+			}, cancellationToken: cancellationToken, transaction: transaction);
+
+			await _connection.ExecuteAsync(entityDefinition);
+
+			const string insertObservation =
+				@"INSERT INTO [dbo].[Observation]
            		([Id]
            		,[OriginalId]
            		,[Status]
@@ -234,90 +284,56 @@ public class ObservationCommand : IObservationCommand
            		,@ReferenceRangeAgeLow
            		,(select Id from dbo.Observation where OriginalId = @RelatedTo)
            		,@Entityid)";
-            
-            var commandDefinition = new CommandDefinition(insertObservation, new
-            {
-                Id = observation.Id,
-                OriginalId = observation.OriginalId,
-                Status = observation.Status,
-                Category = observation.Category,
-                Code = observation.Code?.Id,
-                BasedOn = observation.BasedOn?.OriginalId,
-                BasedOnType = observation.BasedOn?.Type,
-                SubjectId = observation.Subject.OriginalId,
-                ContextId = observation.Context?.OriginalId,
-                EffectiveDate = observation.EffectiveDate,
-                EffectiveDateFrom = observation.EffectiveDateFrom,
-                EffectiveDateTo = observation.EffectiveDateTo,
-                Issued = observation.Issued,
-                PerformerId = observation.Performer?.OriginalId,
-                PerformerType = observation.Performer?.Type,
-                Interpretation = observation.Interpretation,
-                DataAbsentReason = observation.DataAbsentReason,
-                Comment = observation.Comment,
-                BodySite = observation.BodySite,
-                Method = observation.Method,
-                Device = observation.Device?.OriginalId,
-                ReferenceText = observation.ReferenceText,
-                ReferenceRangeLow = observation.ReferenceRangeLow,
-                ReferenceRangeLowUnit = observation.ReferenceRangeLowUnit,
-                ReferenceRangeHigh = observation.ReferenceRangeHigh,
-                ReferenceRangeHighUnit = observation.ReferenceRangeHighUnit,
-                ReferenceRangeType = observation.ReferenceRangeType,
-                ReferenceRangeAppliesTo = observation.ReferenceRangeAppliesTo,
-                ReferenceRangeAgeHigh = observation.ReferenceRangeAgeHigh,
-                ReferenceRangeAgeLow = observation.ReferenceRangeAgeLow,
-                RelatedTo = observation.RelatedTo?.OriginalId,
-                Entityid = observation.EntityId
-                
-            }, cancellationToken: cancellationToken, transaction: transaction);
-            
-            var result = await _connection.ExecuteAsync(commandDefinition);
-            if (result == 0)
-            {
-                throw new DataException("Error: User request was not successful.");
-            }
-            
-            const string insertComponent =
-	            @"INSERT INTO [dbo].[ObservationComponent]
-           		([Id]
-           		,[ObservationId]
-           		,[CodeId]
-           		,[ValueQuantity]
-           		,[ValueQuantityUnit]
-           		)
-     			VALUES
-           		(@Id
-           		,@ObservationId
-           		,@CodeId
-           		,@ValueQuantity
-           		,@ValueQuantityUnit)";
 
-            if (observation.Components == null) return observation.Id;
-            foreach (var componentCommandDefinition in observation.Components.Select(component => new CommandDefinition(insertComponent, new
-                     {
-	                     Id = Guid.NewGuid(),
-	                     ObservationId = observation.Id,
-	                     CodeId = component.Code?.Id,
-	                     ValueQuantity = component.ValueQuantity,
-	                     ValueQuantityUnit = component.ValueQuantityUnit,
+			var commandDefinition = new CommandDefinition(insertObservation, new
+			{
+				Id = observation.Id,
+				OriginalId = observation.OriginalId,
+				Status = observation.Status,
+				Category = observation.Category,
+				Code = observation.Code?.Id,
+				BasedOn = observation.BasedOn?.OriginalId,
+				SubjectId = observation.Subject.OriginalId,
+				ContextId = observation.Context?.OriginalId,
+				EffectiveDate = observation.EffectiveDate,
+				EffectiveDateFrom = observation.EffectiveDateFrom,
+				EffectiveDateTo = observation.EffectiveDateTo,
+				Issued = observation.Issued,
+				PerformerId = observation.Performer?.OriginalId,
+				Interpretation = observation.Interpretation,
+				DataAbsentReason = observation.DataAbsentReason,
+				Comment = observation.Comment,
+				BodySite = observation.BodySite,
+				Method = observation.Method,
+				Device = observation.Device?.OriginalId,
+				ReferenceText = observation.ReferenceText,
+				ReferenceRangeLow = observation.ReferenceRangeLow,
+				ReferenceRangeLowUnit = observation.ReferenceRangeLowUnit,
+				ReferenceRangeHigh = observation.ReferenceRangeHigh,
+				ReferenceRangeHighUnit = observation.ReferenceRangeHighUnit,
+				ReferenceRangeType = observation.ReferenceRangeType,
+				ReferenceRangeAppliesTo = observation.ReferenceRangeAppliesTo,
+				ReferenceRangeAgeHigh = observation.ReferenceRangeAgeHigh,
+				ReferenceRangeAgeLow = observation.ReferenceRangeAgeLow,
+				RelatedTo = observation.RelatedTo?.OriginalId,
+				Entityid = observation.EntityId
 
-                     }, cancellationToken: cancellationToken, transaction: transaction)))
-            {
-	            result = await _connection.ExecuteAsync(componentCommandDefinition);
-	            if (result == 0)
-	            {
-		            throw new DataException("Error: User request was not successful.");
-	            }
-            }
+			}, cancellationToken: cancellationToken, transaction: transaction);
 
-            return observation.Id;
-    }
+			var result = await _connection.ExecuteAsync(commandDefinition);
+			if (result == 0)
+			{
+				throw new DataException("Error: User request was not successful.");
+			}
 
-    public async Task UpdateObservationAsync(ObservationDTO observation, CancellationToken cancellationToken, IDbTransaction transaction)
-    {
-         const string updateOrganization =
-                @"UPDATE [dbo].[Observation]
+			return observation.Id;
+		}
+
+		public async Task UpdateObservationAsync(ObservationDTO observation, CancellationToken cancellationToken,
+			IDbTransaction transaction)
+		{
+			const string updateOrganization =
+				@"UPDATE [dbo].[Observation]
 				  SET
                          [OriginalId] 				= @OriginalId
            				,[Status] 					= @Status
@@ -346,44 +362,44 @@ public class ObservationCommand : IObservationCommand
            				,[RelatedTo]				= @RelatedTo
            				,[Entityid]					= @Entityid
                  WHERE Id = @Id";
-            
-            var commandDefinition = new CommandDefinition(updateOrganization, new
-            {
-	            Id = observation.Id,
-	            OriginalId = observation.OriginalId,
-	            Status = observation.Status,
-	            Category = observation.Category,
-	            Code = observation.Code?.Id,
-	            BasedOn = observation.BasedOn?.Id,
-	            SubjectId = observation.Subject.Id,
-	            ContextId = observation.Context?.Id,
-	            EffectiveDate = observation.EffectiveDate,
-	            EffectiveDateFrom = observation.EffectiveDateFrom,
-	            EffectiveDateTo = observation.EffectiveDateTo,
-	            Issued = observation.Issued,
-	            PerformerId = observation.Performer?.OriginalId,
-	            Interpretation = observation.Interpretation,
-	            DataAbsentReason = observation.DataAbsentReason,
-	            Comment = observation.Comment,
-	            BodySite = observation.BodySite,
-	            Method = observation.Method,
-	            Device = observation.Device?.Id,
-	            ReferenceRangeLow = observation.ReferenceRangeLow,
-	            ReferenceRangeHigh = observation.ReferenceRangeHigh,
-	            ReferenceRangeType = observation.ReferenceRangeType,
-	            ReferenceRangeAppliesTo = observation.ReferenceRangeAppliesTo,
-	            ReferenceRangeAgeHigh = observation.ReferenceRangeAgeHigh,
-	            ReferenceRangeAgeLow = observation.ReferenceRangeAgeLow,
-	            RelatedTo = observation.RelatedTo?.Id,
-	            Entityid = observation.EntityId
 
-            }, cancellationToken: cancellationToken, transaction: transaction);
-            
-            var result = await _connection.ExecuteAsync(commandDefinition);
-            if (result == 0)
-            {
-                throw new DataException("Error: User request was not successful.");
-            }
-    }
+			var commandDefinition = new CommandDefinition(updateOrganization, new
+			{
+				Id = observation.Id,
+				OriginalId = observation.OriginalId,
+				Status = observation.Status,
+				Category = observation.Category,
+				Code = observation.Code?.Id,
+				BasedOn = observation.BasedOn?.Id,
+				SubjectId = observation.Subject.Id,
+				ContextId = observation.Context?.Id,
+				EffectiveDate = observation.EffectiveDate,
+				EffectiveDateFrom = observation.EffectiveDateFrom,
+				EffectiveDateTo = observation.EffectiveDateTo,
+				Issued = observation.Issued,
+				PerformerId = observation.Performer?.OriginalId,
+				Interpretation = observation.Interpretation,
+				DataAbsentReason = observation.DataAbsentReason,
+				Comment = observation.Comment,
+				BodySite = observation.BodySite,
+				Method = observation.Method,
+				Device = observation.Device?.Id,
+				ReferenceRangeLow = observation.ReferenceRangeLow,
+				ReferenceRangeHigh = observation.ReferenceRangeHigh,
+				ReferenceRangeType = observation.ReferenceRangeType,
+				ReferenceRangeAppliesTo = observation.ReferenceRangeAppliesTo,
+				ReferenceRangeAgeHigh = observation.ReferenceRangeAgeHigh,
+				ReferenceRangeAgeLow = observation.ReferenceRangeAgeLow,
+				RelatedTo = observation.RelatedTo?.Id,
+				Entityid = observation.EntityId
 
-}
+			}, cancellationToken: cancellationToken, transaction: transaction);
+
+			var result = await _connection.ExecuteAsync(commandDefinition);
+			if (result == 0)
+			{
+				throw new DataException("Error: User request was not successful.");
+			}
+		}
+
+	}

@@ -22,25 +22,21 @@ namespace GPMigratorApp.Controllers
         private readonly AppSettings _appSettings;
         private readonly IStoreRecordService _storeRecordService;
         private readonly IPatientService _patientService;
-        private readonly IOrganizationService _organizationService;
 
         
-        public DatabaseViewerController(ILogger<DatabaseViewerController> logger, IPatientService patientService, IOrganizationService organizationService)
+        public DatabaseViewerController(ILogger<DatabaseViewerController> logger, IPatientService patientService)
         {
             _logger = logger;
             _patientService = patientService;
-            _organizationService = organizationService;
         }
 
 
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            // var patientrecords = await _patientService.GetAllPatientsAsync(cancellationToken);
-            
-            var organizationrecords = await _organizationService.GetAllOrganizationsAsync(cancellationToken);
+            var patientrecords = await _patientService.GetAllPatientsAsync(cancellationToken);
             
             
-            return View(organizationrecords);
+            return View(patientrecords);
         }
         
 
@@ -49,5 +45,6 @@ namespace GPMigratorApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        
     }
 }

@@ -31,7 +31,8 @@ namespace GPConnect.Provider.AcceptanceTests.Http
         public IEnumerable<GPConnectMedicationRequest> MedicationRequests => GetResources<MedicationRequest>(ResourceType.MedicationRequest).Select(x => new GPConnectMedicationRequest(x, this));
         public List<DocumentReference> Documents => GetResources<DocumentReference>(ResourceType.DocumentReference);
         public List<EpisodeOfCare> EpisodesOfCare => GetResources<EpisodeOfCare>(ResourceType.EpisodeOfCare);
-        public IEnumerable<EncounterDTO> Encounters => GetResources<Encounter>(ResourceType.Encounter).Select(x=> new GPConnectEncounter(x, this).GetDTO());
+        public IEnumerable<EncounterDTO> Encounters => GetResources<Encounter>(ResourceType.Encounter).Select(x=> new 
+            GPConnectEncounter(x, this).GetDTO());
         public IEnumerable<OrganizationDTO> Organizations => GetResources<Organization>(ResourceType.Organization).Select(x=> new GPConnectOrganization(x).GetDTO());
         public IEnumerable<LocationDTO> Locations => GetResources<Location>(ResourceType.Location).Select(x=> new GPConnectLocation(x,Organizations).GetDTO());
         public List<List> Lists => GetResources<List>(ResourceType.List);

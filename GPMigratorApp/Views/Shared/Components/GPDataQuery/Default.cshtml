@@ -1,0 +1,36 @@
+@using Newtonsoft.Json
+@using GPMigratorApp.ViewComponents
+@using GPMigratorApp.DTOs
+@model IEnumerable<GPMigratorApp.QueryDTOs.BloodPressureQuery>
+
+<div style="overflow-x: auto;">
+<table role="table" class="nhsuk-table-responsive">
+  <caption class="nhsuk-table__caption">All GP Data</caption>
+  <thead role="rowgroup" class="nhsuk-table__head">
+  <tr role="row">
+    <th role="columnheader" class="" scope="col">Date of Birth</th>
+    <th role="columnheader" class="" scope="col">Patient ID</th>
+    <th role="columnheader" class="" scope="col">NHS Number</th>
+    <th role="columnheader" class="" scope="col">Patient Age</th>
+    <th role="columnheader" class="" scope="col">Date of last refused BP reading</th>
+    <th role="columnheader" class="" scope="col">Years since last BP reading</th>
+    
+  </tr>
+  </thead>
+  <tbody class="nhsuk-table__body">
+  @foreach (var bloodpressure in Model)
+  {
+    <tr role="row">
+      <td role="cell">@bloodpressure.DateOfBirth.ToString("dd/MM/yyyy")</td> <!-- Format DateOfBirth if it's a DateTime -->
+      <td role="cell">@bloodpressure.PatientId</td>
+      <td role="cell">@bloodpressure.NHSNumber</td>
+      <td role="cell">@bloodpressure.Age</td>
+      <td role="cell">@bloodpressure.LastRefusedBPReading</td>
+      <td role="cell">@bloodpressure.YearsSinceLastBPReading</td>
+        
+        
+    </tr>
+  }
+  </tbody>
+</table>
+</div>

@@ -1,0 +1,76 @@
+@using Hl7.Fhir.Model
+@using GPMigratorApp.GPConnect.Helpers
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model GPMigratorApp.DTOs.OrganizationDTO
+
+<div class="nhsuk-width-container">
+<dl class="nhsuk-summary-list">
+
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            ODSCode
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.ODSCode
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.Name
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Telecom
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.Telecom
+        </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Type
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.Type
+        </dd>
+    </div>
+    @if (@Model.Address is not null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Address
+            </dt>
+            @Html.Partial("Address", @Model.Address)
+        </div>
+    }
+    @if (@Model.PartOf is not null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Part of
+            </dt>
+            @Model.PartOf.Name
+        </div>
+    }
+    @if (@Model.Contact is not null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Contact
+            </dt>
+            @Model.Contact.Title @Model.Contact.GivenName @Model.Contact.Surname
+            @if (@Model.Contact.Address is not null)
+            {
+                <dt class="nhsuk-summary-list__key">
+                    Contact Address
+                </dt>
+                @Html.Partial("Address", @Model.Contact.Address)
+            }
+        </div>
+    }
+</dl>
+</div>

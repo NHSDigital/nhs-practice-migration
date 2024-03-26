@@ -4,6 +4,7 @@ using GPMigratorApp.Data;
 using GPMigratorApp.Data.Database.Providers.Interfaces;
 using GPMigratorApp.Data.Interfaces;
 using GPMigratorApp.DTOs;
+using GPMigratorApp.Models;
 using GPMigratorApp.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,6 +16,25 @@ public class OrganizationService: IOrganizationService
     public OrganizationService(IAzureSqlDbConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
+    }
+
+    public async Task<OrganizationDTO> GetOrganizationAsync(string originalId, CancellationToken cancellationToken)
+    {
+        var connection = await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
+        var organizationCommand = new OrganizationCommand(connection);
+        var existingRecord = await organizationCommand.GetOrganizationAsync(originalId, cancellationToken, null);
+
+
+        return existingRecord;
+    }
+    
+    public async Task<PaginatedData<OrganizationDTO>>  GetAllOrganizationsPaginatedAsync(int offset, int limit, CancellationToken cancellationToken)
+    {
+        var connection = await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
+        var organizationCommand = new OrganizationCommand(connection);
+        var organization = await organizationCommand.GetOrganizationsPaginatedAsync(offset, limit, cancellationToken);
+
+        return organization;
     }
     
     public async Task<IEnumerable<OrganizationDTO>> GetAllOrganizationsAsync(CancellationToken cancellationToken)
@@ -29,11 +49,7 @@ public class OrganizationService: IOrganizationService
 
     }
     
-    public async Task<IEnumerable<OrganizationDTO>> GetAllOrganizationRecordsAsync(CancellationToken cancellationToken)
-    {
-        return null;
 
-    }
     
     public async Task PutOrganizations(IEnumerable<OrganizationDTO> organizations,IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)
     { 

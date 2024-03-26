@@ -56,7 +56,7 @@ namespace GPMigratorApp.Controllers
             {
                 return View("Index", search);
             }
-
+            
             search.NhsNumber = search.NhsNumber.Trim();
 
             var jsonPatients = new List<string>

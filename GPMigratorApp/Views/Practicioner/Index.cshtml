@@ -1,0 +1,79 @@
+@using Hl7.Fhir.Model
+@using GPMigratorApp.GPConnect.Helpers
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model GPMigratorApp.DTOs.PracticionerDTO
+
+<div class="nhsuk-width-container">
+<dl class="nhsuk-summary-list">
+
+    
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Name
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                 @Model.FullName
+                           
+                        </dd>
+            
+        </div>
+    
+    @if (Model.Address != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Address
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.Address
+            </dd>
+        </div>
+    }
+    @if (Model.Gender != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Gender
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.Gender
+            </dd>
+        </div>
+    }
+    @if (Model.DateOfBirthUtc != null)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                DOB
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.DateOfBirthUtc
+            </dd>
+        </div>
+    }
+    
+        @if (Model.Id != null)
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Practitioner ID
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.Id
+                </dd>
+            </div>
+        }
+        @if (Model.SdsUserId != null)
+                {
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            SDS User ID
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @Model.SdsUserId
+                        </dd>
+                    </div>
+                }
+
+</dl>
+</div>

@@ -54,6 +54,7 @@ builder.Services.AddScoped<ICodingService, CodingService>();
 builder.Services.AddScoped<IConditionService, ConditionService>();
 builder.Services.AddScoped<IProcedureRequestService, ProcedureRequestService>();
 builder.Services.AddScoped<IQueryRepository, QueryRepository>();
+builder.Services.AddScoped<IGPDataQueryService, GPDataQueryService>();
 
 var app = builder.Build();
 

@@ -1,3 +1,5 @@
+using Hl7.Fhir.Model;
+
 namespace GPMigratorApp.DTOs;
 
 public class OrganizationDTO
@@ -16,6 +18,7 @@ public class OrganizationDTO
     public OrganizationDTO? PartOf {get; set; }
     public ContactDTO? Contact {get; set; }
     public Guid EntityId { get; set; }
+
     
     
     

@@ -15,7 +15,17 @@ public class PractitionerService: IPracticionerService
     }
     private readonly IAzureSqlDbConnectionFactory _connectionFactory;
 
-    
+    public async Task<PracticionerDTO> GetSinglePracticionerAsync(String originalId, CancellationToken cancellationToken)
+    {
+        var newConnection =  await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);
+        
+        var practitionerCommand = new PracticionerCommand(newConnection);
+
+        var singlePracticioner = await practitionerCommand.GetSinglePracticionerAsync(originalId, cancellationToken);
+
+        return singlePracticioner;
+
+    }
     public async Task<IEnumerable<PracticionerRoleDTO>> GetAllPractitionersAsync(CancellationToken cancellationToken)
     {
         var newConnection =  await _connectionFactory.GetReadOnlyConnectionAsync(cancellationToken);

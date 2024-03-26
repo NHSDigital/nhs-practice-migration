@@ -1,12 +1,9 @@
 using System.Data;
 using Dapper;
-using GPMigratorApp.Data.Database.Providers.Interfaces;
 using GPMigratorApp.Data.Interfaces;
-using GPMigratorApp.Data.IntermediaryModels;
 using GPMigratorApp.Data.Types;
 using GPMigratorApp.DTOs;
-using Hl7.Fhir.Model;
-using Microsoft.Data.SqlClient;
+using GPMigratorApp.Models;
 
 namespace GPMigratorApp.Data;
 
@@ -19,16 +16,59 @@ public class OrganizationCommand : IOrganizationCommand
         _connection = connection;
     }
 
+    
+    public async Task<PaginatedData<OrganizationDTO>> GetOrganizationsPaginatedAsync(int offset, int limit, CancellationToken cancellationToken)
+	{
+		string getExisting =
+			@$"SELECT
+    [{nameof(OrganizationDTO.Id)}]             = org.Id
+    ,[{nameof(OrganizationDTO.ODSCode)}]        = org.ODSCode
+    ,[{nameof(OrganizationDTO.PeriodStart)}]    = org.PeriodStart
+    ,[{nameof(OrganizationDTO.PeriodEnd)}]      = org.PeriodEnd
+    ,[{nameof(OrganizationDTO.Type)}]           = org.Type
+    ,[{nameof(OrganizationDTO.Name)}]           = org.Name
+    ,[{nameof(OrganizationDTO.Telecom)}]        = org.Telecom
+    ,[{nameof(OrganizationDTO.EntityId)}]       = org.EntityId
+    ,[{nameof(OrganizationDTO.Address.Id)}]		=org.AddressId
+    ,[{nameof(OrganizationDTO.OriginalId)}]		=org.OriginalId
+	,[{nameof(AddressDTO.Id)}]				   = address.Id
+	,[{nameof(AddressDTO.Use)}]				   = address.[Use]
+	,[{nameof(AddressDTO.HouseNameFlatNumber)}] = address.HouseNameFlatNumber
+	,[{nameof(AddressDTO.NumberAndStreet)}]	   = address.NumberAndStreet
+	,[{nameof(AddressDTO.Village)}]			   = address.Village
+	,[{nameof(AddressDTO.Town )}]			   = address.Town
+	,[{nameof(AddressDTO.County )}]			   = address.County
+	,[{nameof(AddressDTO.Postcode)}]		   = address.Postcode
+	,[{nameof(AddressDTO.From)}]			   = address.[From]
+	,[{nameof(AddressDTO.To )}]				   = address.[To]
+FROM Organization AS org
+LEFT JOIN [dbo].[Address] address 
+ON address.Id = org.AddressID 
+ORDER BY org.EntityId
+OFFSET @Offset ROWS
+FETCH NEXT @Limit ROWS ONLY;
+
+SELECT COUNT(*)
+FROM Organization AS org;";
+		
+		var reader = await _connection.QueryMultipleAsync(getExisting, new { Offset = offset, Limit = limit });
+		var organizations = reader.Read<OrganizationDTO>();
+		var count = await reader.ReadFirstAsync<int>();
+
+		return new PaginatedData<OrganizationDTO>(count, organizations);
+	}
+
     public async Task<IEnumerable<OrganizationDTO>> GetAllOrganizationRecordsAsync(CancellationToken cancellationToken)
     {
 	    string getExisting =
 		    @$"SELECT 
-    					[{nameof(OrganizationDTO.Id)}] 						=organization.Id
+    					 [{nameof(OrganizationDTO.Id)}] 					=organization.Id
     					,[{nameof(OrganizationDTO.ODSCode)}]				=organization.ODSCode
     					,[{nameof(OrganizationDTO.Type)}]					=organization.Type
 						,[{nameof(OrganizationDTO.Name)}]					=organization.Name
     					,[{nameof(OrganizationDTO.Telecom)}]				=organization.Telecom
     					,[{nameof(OrganizationDTO.Address.Id)}]				=organization.AddressId
+						,[{nameof(OrganizationDTO.OriginalId)}]				=organization.OriginalId
 						FROM [dbo].[Organization]";
 
 	    var reader = await _connection.QueryMultipleAsync(getExisting, new

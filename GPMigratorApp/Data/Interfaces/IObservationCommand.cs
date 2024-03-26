@@ -1,6 +1,7 @@
 using System.Data;
 using GPMigratorApp.Data.IntermediaryModels;
 using GPMigratorApp.DTOs;
+using GPMigratorApp.Models;
 using Microsoft.Data.SqlClient;
 
 namespace GPMigratorApp.Data.Interfaces;
@@ -14,4 +15,8 @@ public interface IObservationCommand
 
     Task UpdateObservationAsync(ObservationDTO observation, CancellationToken cancellationToken,
         IDbTransaction transaction);
+
+    Task<PaginatedData<ObservationDTO>> GetObservationsPaginatedAsync(Guid patientId, int offset, int limit,
+        CancellationToken cancellationToken);
+
 }
