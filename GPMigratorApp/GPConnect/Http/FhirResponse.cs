@@ -42,6 +42,8 @@ namespace GPConnect.Provider.AcceptanceTests.Http
         public IEnumerable<ObservationDTO> Observations => GetResources<Observation>(ResourceType.Observation).Select(x=> new GPConnectObservation(x, Patients).GetDTO());
         public IEnumerable<ConditionDTO> Conditions => GetResources<Condition>(ResourceType.Condition).Select(x=> new GPConnectCondition(x,this).GetDTO());
         public IEnumerable<ProcedureRequestDTO> ProcedureRequests => GetResources<ProcedureRequest>(ResourceType.ProcedureRequest).Select(x=> new GPConnectProcedureRequest(x,this).GetDTO());
+        public IEnumerable<ImmunizationDTO> Immunizations => GetResources<Immunization>(ResourceType.Immunization).Select(x=> new GPConnectImmunization(x,this).GetDTO());
+
         private List<T> GetResources<T>(ResourceType resourceType) where T : Resource
         {
             //Need to consider cases where T isn't in ResourceTypeMap (and implementation!!)

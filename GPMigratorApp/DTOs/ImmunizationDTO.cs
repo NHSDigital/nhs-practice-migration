@@ -2,7 +2,8 @@ namespace GPMigratorApp.DTOs;
 
 public class ImmunizationDTO
 {
-    public string Guid { get; set; }
+    public Guid Id { get; set; }
+    public string OriginalId { get; set; }
     public IdentifierDTO? Identifier { get; set; }
     public string? Status { get; set; }
     public string? Type { get; set; }
@@ -16,15 +17,15 @@ public class ImmunizationDTO
     public DateTime? Date { get; set; }
     public bool? PrimarySource { get; set; }
     public string? LotNumber { get; set; }
-    public string? Site { get; set; }
-    public string? Route { get; set; }
+    public CodeDTO? Site { get; set; }
+    public CodeDTO? Route { get; set; }
     public string? RouteText { get; set; }
     public PracticionerDTO? NoteAuthor { get; set; }
     public string? NoteText { get; set; }
     public DateTime? NoteDate { get; set; }
     public DateTime? ExpirationDate { get; set; }
-    public string? VaccinationProcedure { get; set; }
-    public string? VaccinationCode { get; set; }
+    public CodeDTO? VaccinationProcedure { get; set; }
+    public CodeDTO? VaccinationCode { get; set; }
     public decimal? DoseQuantity { get; set; }
     public bool? ReactionReported { get; set; }
     public ObservationDTO? ReactionDetail { get; set; }
@@ -37,4 +38,5 @@ public class ImmunizationDTO
     public string? TargetDisease { get; set; }
     public string? DoseStatus { get; set; }
     public string? DoseStatusReason { get; set; }
+    public Guid EntityId { get; set; }
 }
