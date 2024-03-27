@@ -11,7 +11,7 @@ public class ImmunizationDTO
     public PatientDTO? Subject { get; set; }
     public EncounterDTO? Encounter { get; set; }
     public PracticionerDTO? Actor { get; set; }
-    public LocationDTO Location { get; set; }
+    public LocationDTO? Location { get; set; }
     public bool? ParentPresent { get; set; }
     public DateTime? RecordedDate { get; set; }
     public DateTime? Date { get; set; }

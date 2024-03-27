@@ -9,7 +9,8 @@ public enum EntityTypes
     Observation = 5,
     Condition = 6,
     DiaryEntry = 7,
-    ProcedureRequest = 8
+    ProcedureRequest = 8,
+    Immunization = 9
 }
 
 public static class EntityTypeHelper
@@ -27,6 +28,7 @@ public static class EntityTypeHelper
             "Condition" => EntityTypes.Condition,
             "DiaryEntry" => EntityTypes.DiaryEntry,
             "ProcedureRequest" => EntityTypes.ProcedureRequest,
+            "Immunization" => EntityTypes.Immunization,
             _ => null
         };
     }

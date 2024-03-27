@@ -22,11 +22,28 @@ public class ImmunizationService: IImmunizationService
     
     public async Task PutImmunizations(IEnumerable<ImmunizationDTO> immunizations,IDbConnection connection, IDbTransaction transaction, CancellationToken cancellationToken)
     {  
-        var locationCommand = new ConditionCommand(connection);
+        var immunizationCommand = new ImmunizationCommand(connection);
 
-        foreach (var immunization in immunizations) 
+        foreach (var immunization in immunizations)
         {
-  
+            var existing = await immunizationCommand.GetImmunizationAsync(immunization.OriginalId, cancellationToken, transaction);
+            if (existing is null)
+            {
+                if (immunization.Site is not null)
+                    immunization.Site.Id = await _codingService.PutCoding(immunization.Site, connection, transaction, cancellationToken);
+                
+                if (immunization.Route is not null)
+                    immunization.Route.Id = await _codingService.PutCoding(immunization.Route, connection, transaction, cancellationToken);
+                
+                if (immunization.VaccinationProcedure is not null)
+                    immunization.VaccinationProcedure.Id = await _codingService.PutCoding(immunization.VaccinationProcedure, connection, transaction, cancellationToken);
+                
+                if (immunization.VaccinationCode is not null)
+                    immunization.VaccinationCode.Id = await _codingService.PutCoding(immunization.VaccinationCode, connection, transaction, cancellationToken);
+                
+                await immunizationCommand.InsertImmunizationAsync(immunization, cancellationToken, transaction);
+            }
+
         }
     }
 

@@ -27,102 +27,26 @@ public class ImmunizationCommand : IImmunizationCommand
     {
 	    string getExisting =
 		    @$"SELECT 
-  						 [{nameof(ConditionDTO.Id)}]							  	= condition.Id
-						,[{nameof(ConditionDTO.OriginalId)}]					  	= condition.OriginalId
-						,[{nameof(ConditionDTO.ProblemSignificance)}]			  	= condition.ProblemSignificance
-						,[{nameof(ConditionDTO.Episode)}]						  	= condition.Episode
-  						,[{nameof(ConditionDTO.ClinicalStatus)}]				  	= condition.ClinicalStatus
-  						,[{nameof(ConditionDTO.VerificationStatus)}]			  	= condition.VerificationStatus
-  						,[{nameof(ConditionDTO.Severity)}]					    = condition.Severity
-						,[{nameof(ConditionDTO.BodySite)}]					    = condition.BodySite
-						,[{nameof(ConditionDTO.Context)}]					      	= condition.Context
-						,[{nameof(ConditionDTO.OnsetDate)}]					    = condition.OnsetDate
-						,[{nameof(ConditionDTO.OnsetAge)}]					    = condition.OnsetAge
-						,[{nameof(ConditionDTO.OnsetPeriodStart)}]				= condition.OnsetPeriodStart
-						,[{nameof(ConditionDTO.OnsetPeriodEnd)}]				  	= condition.OnsetPeriodEnd
-						,[{nameof(ConditionDTO.AbatementDate)}]				 	= condition.AbatementDate
-						,[{nameof(ConditionDTO.AbatementAge)}]				 	= condition.AbatementAge
-						,[{nameof(ConditionDTO.AbatementPeriodStart)}]			= condition.AbatementPeriodStart
-						,[{nameof(ConditionDTO.AbatementPeriodEnd)}]			  	= condition.AbatementPeriodEnd
-						,[{nameof(ConditionDTO.Abatement)}]			  			= condition.Abatement
-						,[{nameof(ConditionDTO.AssertedDate)}]			  		= condition.AssertedDate
-						,[{nameof(ConditionDTO.NoteText)}]			  		 	= condition.NoteText
-						,[{nameof(ConditionDTO.NoteAuthored)}]			  		= condition.NoteAuthored
-						,[{nameof(ConditionDTO.EntityId)}]			  		    = condition.EntityId
-        			    ,[{nameof(CodeDTO.Id)}]                  					= coding.Id
-          			    ,[{nameof(CodeDTO.ReadCode)}]                  				= coding.ReadCode
-          			    ,[{nameof(CodeDTO.SnomedCode)}]                  			= coding.SnomedCode
-          			    ,[{nameof(CodeDTO.Description)}]                  			= coding.Description
-				  	    ,[{nameof(PatientDTO.Id)}]									= patient.Id
-                      	,[{nameof(PatientDTO.OriginalId)}]                  		= patient.OriginalId
-                      	,[{nameof(PatientDTO.Gender)}]                    			= patient.Gender
-                      	,[{nameof(PatientDTO.Title)}]                        		= patient.Title
-                      	,[{nameof(PatientDTO.GivenName)}]                   		= patient.GivenName
-					  	,[{nameof(PatientDTO.MiddleNames)}]                  		= patient.MiddleNames
-                      	,[{nameof(PatientDTO.Surname)}]								= patient.Surname
-  					  	,[{nameof(PatientDTO.DateOfBirthUTC)}]               		= patient.DateOfBirthUtc
-                      	,[{nameof(PatientDTO.DateOfDeathUTC)}]                		= patient.DateOfDeathUTC
-                      	,[{nameof(PatientDTO.DateOfRegistrationUTC)}]         		= patient.DateOfRegistrationUTC
-                      	,[{nameof(PatientDTO.NhsNumber)}]             				= patient.NhsNumber
-                      	,[{nameof(PatientDTO.PatientTypeDescription)}]        		= patient.PatientTypeDescription
-                      	,[{nameof(PatientDTO.DummyType)}]                    		= patient.DummyType
-					  	,[{nameof(PatientDTO.ResidentialInstituteCode)}]      		= patient.ResidentialInstituteCode
-                      	,[{nameof(PatientDTO.NHSNumberStatus)}]						= patient.NHSNumberStatus
-                      	,[{nameof(PatientDTO.CarerName)}]							= patient.CarerName
-  					  	,[{nameof(PatientDTO.DateOfBirthUTC)}]                		= patient.DateOfBirthUtc
-                      	,[{nameof(PatientDTO.OriginalId)}]                  		= patient.OriginalId
-                      	,[{nameof(PatientDTO.CarerRelation)}]                 		= patient.CarerRelation
-                      	,[{nameof(PatientDTO.PersonGuid)}]             				= patient.PersonGuid
-                      	,[{nameof(PatientDTO.DateOfDeactivation)}]                	= patient.DateOfDeactivation
-                      	,[{nameof(PatientDTO.Deleted)}]                    			= patient.Deleted
-					  	,[{nameof(PatientDTO.Active)}]                  			= patient.Active
-						,[{nameof(PracticionerDTO.Id)}]								= practicioner.Id
-                      	,[{nameof(PracticionerDTO.OriginalId)}]                  	= practicioner.OriginalId
-                      	,[{nameof(PracticionerDTO.SdsUserId)}]                   	= practicioner.SdsUserId
-                      	,[{nameof(PracticionerDTO.SdsRoleProfileId)}]             	= practicioner.SdsRoleProfileId
-                      	,[{nameof(PracticionerDTO.Title)}]                        	= practicioner.Title
-                      	,[{nameof(PracticionerDTO.GivenName)}]                    	= practicioner.GivenName
-					  	,[{nameof(PracticionerDTO.MiddleNames)}]                  	= practicioner.MiddleNames
-                      	,[{nameof(PracticionerDTO.Surname)}]						= practicioner.Surname
-                      	,[{nameof(PracticionerDTO.Gender)}]							= practicioner.Gender
-  					  	,[{nameof(PracticionerDTO.DateOfBirthUtc)}]               	= practicioner.DateOfBirthUtc  
-				  FROM [dbo].[Condition] condition
-				  LEFT JOIN [dbo].[Coding] coding on coding.Id = condition.Code
-				  LEFT JOIN [dbo].[Patient] patient on patient.Id = condition.Subject
-				  LEFT JOIN [dbo].[Encounter] encounter on encounter.Id = condition.Context
-				  LEFT JOIN [dbo].[Practicioner] practicioner ON practicioner.Id = condition.Asserter
-				  LEFT JOIN [dbo].[Entity] author ON author.Id = condition.NoteAuthor
-				  WHERE condition.OriginalId = @OriginalId";
+  						 [{nameof(ImmunizationDTO.Id)}]							  	= immunization.Id
+						 
+				  FROM [dbo].[Immunization] immunization
+				  WHERE immunization.OriginalId = @OriginalId";
         
             var reader = await _connection.QueryMultipleAsync(getExisting, new
             {
                 OriginalId = originalId
             }, transaction: transaction);
-            var conditions = reader.Read<ConditionDTO, CodeDTO?, PatientDTO?, PracticionerDTO?, ConditionDTO>(
-                (condition, code, patient, practicioner) =>
-                {
-	                if (code is not null)
-	                    condition.Code = code;
-	                
-	                if (patient is not null)
-		                condition.Subject = patient;
-	                
-	                if (practicioner is not null)
-		                condition.Asserter = practicioner;
-                   
-
-                    return condition;
-                }, splitOn: $"{nameof(CodeDTO.Id)},{nameof(PatientDTO.Id)},{nameof(PracticionerDTO.Id)}");
+            var conditions = await reader.ReadAsync<ImmunizationDTO>();
 
             return conditions.FirstOrDefault();
     }
 
 
-    public async Task<Guid> InsertImmunizationAsync(ImmunizationDTO condition, CancellationToken cancellationToken,
+    public async Task<Guid> InsertImmunizationAsync(ImmunizationDTO immunization, CancellationToken cancellationToken,
 	    IDbTransaction transaction)
     {
-	    condition.Id = Guid.NewGuid();
-	    condition.EntityId = Guid.NewGuid();
+	    immunization.Id = Guid.NewGuid();
+	    immunization.EntityId = Guid.NewGuid();
 
 	    var entity = @"INSERT INTO [dbo].[Entity]
                         ([Id],
@@ -135,9 +59,9 @@ public class ImmunizationCommand : IImmunizationCommand
 
 	    var entityDefinition = new CommandDefinition(entity, new
 	    {
-		    Id = condition.EntityId,
-		    Type = EntityTypes.Location,
-		    OriginalId = condition.OriginalId
+		    Id = immunization.EntityId,
+		    Type = EntityTypes.Immunization,
+		    OriginalId = immunization.OriginalId
 	    }, cancellationToken: cancellationToken, transaction: transaction);
 
 	    await _connection.ExecuteAsync(entityDefinition);
@@ -186,10 +110,10 @@ public class ImmunizationCommand : IImmunizationCommand
 		           ,@Status
 		           ,@Type
 		           ,@Class
-		           ,@SubjectId
-		           ,@EncounterId
-		           ,@ActorId
-		           ,@LocationId
+		           ,(SELECT Id from Patient WHERE OriginalId = @SubjectId)
+		           ,(SELECT Id from Encounter WHERE OriginalId = @EncounterId)
+		           ,(SELECT Id from Practicioner WHERE OriginalId = @ActorId)
+		           ,(SELECT Id from Location WHERE OriginalId = @LocationId)
 		           ,@ParentPresent
 		           ,@RecordedDate
 		           ,@Date
@@ -198,64 +122,64 @@ public class ImmunizationCommand : IImmunizationCommand
 		           ,@Site
 		           ,@Route
 		           ,@RouteText
-		           ,@NoteAuthorId
+		           ,(SELECT Id from Practicioner WHERE OriginalId = @NoteAuthorId)
 		           ,@NoteText
-		           ,@NoteDate,
+		           ,@NoteDate
 		           ,@ExpirationDate
 		           ,@VaccinationProcedure
 		           ,@VaccinationCode
 		           ,@DoseQuantity
 		           ,@ReactionReported
-		           ,@ReactionDetailId
+		           ,(SELECT Id from Observation WHERE OriginalId = @ReactionDetailId)
 		           ,@ReactionDate
 		           ,@DoseSequence
 		           ,@Description
-		           ,@AuthorityId
+		           ,(SELECT Id from Organization WHERE OriginalId = @AuthorityId)
 		           ,@Series
 		           ,@SeriesDoses
 		           ,@TargetDisease
 		           ,@DoseStatus
 		           ,@DoseStatusReason
-		           ,@EntityId))";
+		           ,@EntityId)";
 
 	    var commandDefinition = new CommandDefinition(insertOrganization, new
 	    {
-		    Id = condition.Id,
-		    OriginalId = condition.OriginalId,
-		    Status = condition.ActualProblem.OriginalId,
-		    Type = condition.ProblemSignificance,
-		    Class = condition.Episode,
-		    SubjectId = condition.ClinicalStatus,
-		    EncounterId = condition.VerificationStatus,
-		    ActorId = condition.Severity,
-		    LocationId = condition.Code?.Id,
-		    ParentPresent = condition.BodySite,
-		    RecordedDate = condition.Subject?.OriginalId,
-		    Date = condition.Context?.Id,
-		    PrimarySource = condition.OnsetDate,
-		    LotNumber = condition.OnsetAge,
-		    Site = condition.OnsetPeriodStart,
-		    Route = condition.OnsetPeriodEnd,
-		    RouteText = condition.AbatementDate,
-		    NoteAuthorId = condition.AbatementAge,
-		    NoteText = condition.AbatementPeriodStart,
-		    NoteDate = condition.AbatementPeriodEnd,
-		    ExpirationDate = condition.Abatement,
-		    VaccinationProcedure = condition.AssertedDate,
-		    VaccinationCode = condition.Asserter?.OriginalId,
-		    DoseQuantity = condition.NoteText,
-		    ReactionReported = condition.NoteAuthored,
-		    ReactionDetailId = condition.NoteAuthor?.OriginalId,
-		    ReactionDate = condition.EntityId,
-		    DoseSequence = condition.Abatement,
-		    Description = condition.AssertedDate,
-		    AuthorityId = condition.Asserter?.OriginalId,
-		    Series = condition.NoteText,
-		    SeriesDoses = condition.NoteAuthored,
-		    TargetDisease = condition.NoteAuthor?.OriginalId,
-		    DoseStatus = condition.EntityId,
-		    DoseStatusReason = condition.NoteAuthor?.OriginalId,
-		    EntityId = condition.EntityId
+		    Id = immunization.Id,
+		    OriginalId = immunization.OriginalId,
+		    Status = immunization.Status,
+		    Type = immunization.Type,
+		    Class = immunization.Class,
+		    SubjectId = immunization.Subject?.OriginalId,
+		    EncounterId = immunization.Encounter?.OriginalId,
+		    ActorId = immunization.Actor?.OriginalId,
+		    LocationId = immunization.Location?.OriginalId,
+		    ParentPresent = immunization.ParentPresent,
+		    RecordedDate = immunization.RecordedDate,
+		    Date = immunization.Date,
+		    PrimarySource = immunization.PrimarySource,
+		    LotNumber = immunization.LotNumber,
+		    Site = immunization.Site?.Id,
+		    Route = immunization.Route?.Id,
+		    RouteText = immunization.RouteText,
+		    NoteAuthorId = immunization.NoteAuthor?.OriginalId,
+		    NoteText = immunization.NoteText,
+		    NoteDate = immunization.NoteDate,
+		    ExpirationDate = immunization.ExpirationDate,
+		    VaccinationProcedure = immunization.VaccinationProcedure?.Id,
+		    VaccinationCode = immunization.VaccinationCode?.Id,
+		    DoseQuantity = immunization.DoseQuantity,
+		    ReactionReported = immunization.ReactionReported,
+		    ReactionDetailId = immunization.ReactionDetail?.OriginalId,
+		    ReactionDate = immunization.ReactionDate,
+		    DoseSequence = immunization.DoseSequence,
+		    Description = immunization.Description,
+		    AuthorityId = immunization.Authority?.OriginalId,
+		    Series = immunization.Series,
+		    SeriesDoses = immunization.SeriesDoses,
+		    TargetDisease = immunization.TargetDisease,
+		    DoseStatus = immunization.DoseStatus,
+		    DoseStatusReason = immunization.DoseStatusReason,
+		    EntityId = immunization.EntityId
 
 	    }, cancellationToken: cancellationToken, transaction: transaction);
 
@@ -265,6 +189,6 @@ public class ImmunizationCommand : IImmunizationCommand
 		    throw new DataException("Error: User request was not successful.");
 	    }
 	    
-	    return condition.Id;
+	    return immunization.Id;
     }
 }

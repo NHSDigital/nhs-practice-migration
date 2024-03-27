@@ -71,8 +71,4 @@
     <_ContentIncludedByDefault Remove="Views\Components\Patient\Patient.cshtml" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="Views\Shared\Components\Patient\Patient.cshtml" />
-  </ItemGroup>
-
 </Project>
